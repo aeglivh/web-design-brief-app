@@ -141,7 +141,7 @@ module.exports = async (req, res) => {
 
     return res.status(200).json({ success: true, brief: full, tags });
   } catch (err) {
-    console.error('[api/generate]', err.message);
-    return res.status(502).json({ error: 'Failed to generate brief. Please try again.' });
+    console.error('[api/generate]', err.message, err.stack);
+    return res.status(502).json({ error: 'Failed to generate brief. Please try again.', detail: err.message });
   }
 };

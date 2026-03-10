@@ -165,7 +165,7 @@ export default function ClientForm() {
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Generation failed");
+      if (!res.ok) throw new Error(data.detail || data.error || "Generation failed");
       setBrief(data.brief);
       setTags(data.tags);
       setSubmitted(true);
