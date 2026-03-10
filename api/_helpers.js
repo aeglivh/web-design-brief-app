@@ -153,8 +153,7 @@ TONE:
 - Professional, concise, and actionable. Like a senior colleague handing you a project summary before a meeting.
 
 FORMAT RULES — non-negotiable:
-- Plain text only. No markdown. No asterisks, hashes, dashes, or bullets.
-- Write exactly these seven section headers, each on its own line:
+- Write exactly these seven section headers, each on its own line, numbered like "1. Project Overview"
   1. Project Overview
   2. Design Direction
   3. Sitemap Recommendation
@@ -162,11 +161,13 @@ FORMAT RULES — non-negotiable:
   5. SEO Assessment and Strategy
   6. Technical Scope
   7. Designer Notes
-- 7 sections, exactly 1–2 paragraphs each
-- Each paragraph: 2–3 sentences max
-- Each sentence under 25 words
-- Total word count: 300–450 words
-- Do not pad or repeat information. Make every word count.
+- Under each section header, write 3–6 bullet points
+- Each bullet starts with "- " (dash space)
+- Each bullet: one clear, actionable point. Max 20 words per bullet.
+- No sub-bullets. No paragraphs. Only bullets under each header.
+- Total: 40–55 bullets across all sections
+- Do not pad or repeat information. Make every bullet count.
+- No markdown formatting (no bold, no asterisks). Just plain text with "- " bullets.
 
 PROJECT DATA:
 Business: ${d.businessName}

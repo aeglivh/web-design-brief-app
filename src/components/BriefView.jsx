@@ -18,7 +18,6 @@ export function parseBrief(raw) {
   const lines = text.split("\n");
   const sections = [];
   let cur = null;
-  let buf = [];
 
   function isHead(line) {
     if (/^\d+[\.\:\)]\s+\S/.test(line)) return true;
@@ -26,25 +25,21 @@ export function parseBrief(raw) {
     return SECTION_HEADS.some(h => lower.startsWith(h));
   }
 
-  function flush() {
-    if (!cur) { buf = []; return; }
-    const para = buf.join(" ").trim();
-    if (para.length > 2) cur.paragraphs.push(para);
-    buf = [];
-  }
-
   for (const rawLine of lines) {
     const line = rawLine.trim();
-    if (!line) { flush(); continue; }
+    if (!line) continue;
     if (isHead(line)) {
-      flush();
       if (cur) sections.push(cur);
-      cur = { heading: line, paragraphs: [] };
+      cur = { heading: line, bullets: [], paragraphs: [] };
     } else if (cur) {
-      buf.push(line);
+      // Check if it's a bullet point
+      if (/^[-•]\s/.test(line)) {
+        cur.bullets.push(line.replace(/^[-•]\s*/, ""));
+      } else {
+        cur.paragraphs.push(line);
+      }
     }
   }
-  flush();
   if (cur) sections.push(cur);
   return sections;
 }
@@ -196,8 +191,18 @@ export function BriefDisplay({ brief, tags, accent }) {
       {sections.map((sec, i) => (
         <div key={i} style={{ marginBottom: 28 }}>
           <div style={secHead}>{sec.heading}</div>
+          {sec.bullets.length > 0 && (
+            <ul style={{ margin: 0, paddingLeft: 20, listStyle: "none" }}>
+              {sec.bullets.map((b, j) => (
+                <li key={j} style={{ fontSize: 14, lineHeight: 1.8, color: "#334155", marginBottom: 6, paddingLeft: 8, position: "relative" }}>
+                  <span style={{ position: "absolute", left: -12, color: acc, fontWeight: 600 }}>&bull;</span>
+                  {b}
+                </li>
+              ))}
+            </ul>
+          )}
           {sec.paragraphs.map((p, j) => (
-            <p key={j} style={{ fontSize: 15, lineHeight: 1.95, color: "#334155", marginBottom: 14, fontFamily: "Georgia,serif" }}>{p}</p>
+            <p key={j} style={{ fontSize: 14, lineHeight: 1.8, color: "#334155", marginBottom: 10 }}>{p}</p>
           ))}
         </div>
       ))}
@@ -304,7 +309,17 @@ export function PrintView({ brief, form, brand, tags, summaryData, onClose }) {
         {sections.map((sec, i) => (
           <div key={i} className="print-section" style={{ marginBottom: 28 }}>
             <div className="print-sec-head">{sec.heading}</div>
-            {sec.paragraphs.map((p, j) => <p key={j} className="print-p">{p}</p>)}
+            {sec.bullets?.length > 0 && (
+              <ul style={{ margin: 0, paddingLeft: 20, listStyle: "none" }}>
+                {sec.bullets.map((b, j) => (
+                  <li key={j} style={{ fontSize: 13, lineHeight: 1.8, color: "#334155", marginBottom: 5, paddingLeft: 8, position: "relative" }}>
+                    <span style={{ position: "absolute", left: -12, color: acc, fontWeight: 600 }}>&bull;</span>
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {sec.paragraphs?.map((p, j) => <p key={j} className="print-p">{p}</p>)}
           </div>
         ))}
 

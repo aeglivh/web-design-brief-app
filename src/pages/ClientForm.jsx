@@ -55,12 +55,14 @@ const TONE_OPTIONS = [
 ];
 
 const BUDGET_RANGES = [
-  { id: "u3k",    label: "Under CHF 3,000" },
-  { id: "3to8",   label: "CHF 3,000 – 8,000" },
-  { id: "8to15",  label: "CHF 8,000 – 15,000" },
-  { id: "15to30", label: "CHF 15,000 – 30,000" },
-  { id: "30plus", label: "CHF 30,000+" },
+  { id: "u3k",    label: "Under 3,000" },
+  { id: "3to8",   label: "3,000 – 8,000" },
+  { id: "8to15",  label: "8,000 – 15,000" },
+  { id: "15to30", label: "15,000 – 30,000" },
+  { id: "30plus", label: "30,000+" },
 ];
+
+const CURRENCIES = ["CHF", "EUR", "USD", "GBP"];
 
 const REFERRAL_SOURCES = [
   "Google search", "Social media", "Referral / word of mouth",
@@ -87,7 +89,7 @@ function emptyForm() {
     currentSeo: "", seoGoals: "", googleBusiness: "", analytics: "", domainStatus: "",
     visualStyles: [], referenceSites: [{ url: "", notes: "" }, { url: "", notes: "" }, { url: "", notes: "" }],
     brandAssets: "", toneOfVoice: [], uploads: [],
-    budgetRange: "", launchDate: "", maintenanceInterest: "", decisionMakers: "", referralSource: "",
+    budgetRange: "", budgetCurrency: "CHF", launchDate: "", maintenanceInterest: "", decisionMakers: "", referralSource: "",
   };
 }
 
@@ -157,7 +159,8 @@ export default function ClientForm() {
   const handleSubmit = async () => {
     setLoading(true); setError("");
     try {
-      const budgetLabel = BUDGET_RANGES.find(b => b.id === form.budgetRange)?.label || form.budgetRange;
+      const range = BUDGET_RANGES.find(b => b.id === form.budgetRange)?.label || form.budgetRange;
+      const budgetLabel = range ? `${form.budgetCurrency} ${range}` : "";
       const payload = { ...form, budgetRange: budgetLabel, designerSlug: slug };
       const res = await fetch(`${API_BASE}/api/generate`, {
         method: "POST",
@@ -599,10 +602,16 @@ export default function ClientForm() {
             <p style={{ fontSize:13, color:"#64748b", marginBottom:24, lineHeight:1.6 }}>Help us understand your investment range and timeline expectations.</p>
 
             <div style={{ marginBottom:18 }}>
-              <label style={lbl}>Budget Range</label>
+              <label style={lbl}>Currency</label>
+              <div style={{ display:"flex", gap:8, marginBottom:16 }}>
+                {CURRENCIES.map(c => (
+                  <Chip key={c} label={c} selected={form.budgetCurrency === c} onClick={() => set("budgetCurrency", c)}/>
+                ))}
+              </div>
+              <label style={lbl}>Budget Range ({form.budgetCurrency})</label>
               <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
                 {BUDGET_RANGES.map(b => (
-                  <Radio key={b.id} name="budget" value={b.id} checked={form.budgetRange === b.id} label={b.label} onChange={() => set("budgetRange", b.id)}/>
+                  <Radio key={b.id} name="budget" value={b.id} checked={form.budgetRange === b.id} label={`${form.budgetCurrency} ${b.label}`} onChange={() => set("budgetRange", b.id)}/>
                 ))}
               </div>
             </div>
