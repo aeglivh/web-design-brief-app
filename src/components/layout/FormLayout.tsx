@@ -14,9 +14,9 @@ export function FormLayout({
   const style: CSSProperties = bgColor ? { backgroundColor: bgColor } : { backgroundColor: "var(--th-bg)" };
 
   return (
-    <div className="min-h-screen py-12 px-5" style={style}>
+    <div className="min-h-screen flex items-start justify-center py-12 px-5" style={style}>
       <div
-        className="mx-auto rounded-[24px]"
+        className="w-full rounded-[24px]"
         style={{
           maxWidth,
           background: "linear-gradient(135deg, var(--th-surface-hover) 0%, var(--th-surface) 100%)",

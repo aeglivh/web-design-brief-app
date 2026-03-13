@@ -54,8 +54,8 @@ export default function IntakeFormPage() {
   }, [slug]);
 
   const accent = designer?.accent_color || "#3b82f6";
-  const bgColor = "var(--th-bg)";
-  const formBg = designer?.form_bg_colour || "#ffffff";
+  const formBg = designer?.form_bg_colour || "";
+  const bgColor = formBg || "var(--th-bg)";
   const headingFont = designer?.heading_font || "Inter";
   const bodyFont = designer?.body_font || "Inter";
 
@@ -165,7 +165,7 @@ export default function IntakeFormPage() {
   }
 
   return (
-    <FormLayout bgColor={bgColor} maxWidth="720px">
+    <FormLayout bgColor={bgColor} maxWidth="860px">
       <div style={{ fontFamily: `'${bodyFont}', sans-serif` }}>
         {/* Header */}
         <div className="px-10 pt-8 pb-5">
