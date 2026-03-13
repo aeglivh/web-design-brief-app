@@ -3,7 +3,7 @@ import { useTheme } from "@/lib/theme";
 import { API_BASE } from "@/lib/api";
 import { Alert } from "@/components/ui";
 
-const WAITLIST_CLOSES = new Date("2026-03-18T23:59:59Z");
+const WAITLIST_CLOSES = new Date("2026-03-25T23:59:59Z");
 
 function useCountdown(target: Date) {
   const calc = useCallback(() => {
@@ -100,7 +100,7 @@ export default function WaitlistPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center px-3 sm:px-5 py-4 sm:py-12 relative overflow-hidden"
+      className="min-h-screen flex flex-col items-center justify-center px-2 sm:px-5 py-4 sm:py-12 relative overflow-hidden"
       style={{ backgroundColor: "var(--th-bg)" }}
     >
       {/* Background glow orbs */}
@@ -153,7 +153,7 @@ export default function WaitlistPage() {
         style={{ animation: "enter 0.6s ease-out" }}
       >
         <div
-          className="card-inner rounded-3xl p-8 sm:p-16"
+          className="card-inner rounded-3xl px-5 py-8 sm:p-16"
           style={{ background: "var(--th-glass-bg), var(--th-bg)", backdropFilter: "blur(28px)" }}
         >
           {/* Logo */}
@@ -180,7 +180,7 @@ export default function WaitlistPage() {
 
           {/* Heading */}
           <h1
-            className="text-center text-[40px] sm:text-[72px] font-semibold tracking-[-0.03em] leading-[1.05]"
+            className="text-center text-[46px] sm:text-[72px] font-semibold tracking-[-0.03em] leading-[1.05]"
             style={{ color: "var(--th-text)", marginBottom: 16 }}
           >
             Join the waitlist
