@@ -19,6 +19,7 @@ module.exports = async (req, res) => {
         .eq('slug', slug)
         .single();
       if (error || !data) return res.status(404).json({ error: 'Studio not found' });
+      res.setHeader('Cache-Control', 'no-store, max-age=0');
       return res.status(200).json(data);
     }
 
@@ -32,6 +33,7 @@ module.exports = async (req, res) => {
       .eq('id', user.id)
       .single();
     if (error && error.code !== 'PGRST116') return res.status(500).json({ error: error.message });
+    res.setHeader('Cache-Control', 'no-store, max-age=0');
     return res.status(200).json(data || null);
   }
 

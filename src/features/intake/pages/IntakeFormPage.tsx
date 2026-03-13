@@ -41,7 +41,7 @@ export default function IntakeFormPage() {
 
   useEffect(() => {
     if (!slug) return;
-    fetch(`${API_BASE}/api/designer?slug=${slug}`)
+    fetch(`${API_BASE}/api/designer?slug=${slug}`, { cache: 'no-store' })
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((data) => {
         setDesigner(data);
