@@ -37,7 +37,12 @@ export function BriefModal({
   const [quoteError, setQuoteError] = useState("");
   const [showQuote, setShowQuote] = useState(false);
   const [showContract, setShowContract] = useState(false);
-  const { generate: generateContract, generating: contractLoading, contract, error: contractError } = useContractGeneration();
+  const { generate: generateContract, generating: contractLoading, load: loadContract, save: saveContract, saving: contractSaving, contract, error: contractError } = useContractGeneration();
+
+  // Load existing contract on mount
+  useEffect(() => {
+    loadContract(brief.id);
+  }, [brief.id, loadContract]);
 
   // Lock body scroll when open
   useEffect(() => {
@@ -98,12 +103,15 @@ export function BriefModal({
   if (showContract && contract) {
     return (
       <ContractModal
+        contractId={contract.id}
         data={contract.contract_data}
         studioName={studioName}
         clientName={brief.client_name}
         businessName={brief.business_name}
         currency={brief.quote?.currency || "CHF"}
         accent={accent}
+        onSave={saveContract}
+        saving={contractSaving}
         onClose={() => setShowContract(false)}
       />
     );

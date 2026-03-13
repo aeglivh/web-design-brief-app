@@ -9,13 +9,66 @@ const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 module.exports = async (req, res) => {
   applyCors(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const user = await getUser(req);
   if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
+  // ── GET: load existing contract for a brief ───────────────
+  if (req.method === 'GET') {
+    const { briefId } = req.query || {};
+    if (!briefId) return res.status(400).json({ error: 'briefId is required' });
+
+    const { data: contract, error: err } = await supabase
+      .from('contracts')
+      .select('id, contract_data, status, created_at')
+      .eq('brief_id', briefId)
+      .eq('designer_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (err) return res.status(500).json({ error: 'Failed to load contract' });
+    return res.status(200).json({ contract: contract || null });
+  }
+
+  // ── PATCH: update contract data ───────────────────────────
+  if (req.method === 'PATCH') {
+    const { contractId, contract_data } = req.body || {};
+    if (!contractId || !contract_data) {
+      return res.status(400).json({ error: 'contractId and contract_data are required' });
+    }
+
+    const { data: contract, error: err } = await supabase
+      .from('contracts')
+      .update({ contract_data, updated_at: new Date().toISOString() })
+      .eq('id', contractId)
+      .eq('designer_id', user.id)
+      .select('id, contract_data, status, created_at')
+      .single();
+
+    if (err || !contract) return res.status(404).json({ error: 'Contract not found' });
+    return res.status(200).json({ success: true, contract });
+  }
+
+  // ── POST: generate new contract ───────────────────────────
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
   const { briefId } = req.body || {};
   if (!briefId) return res.status(400).json({ error: 'briefId is required' });
+
+  // Check if contract already exists for this brief
+  const { data: existing } = await supabase
+    .from('contracts')
+    .select('id, contract_data, status, created_at')
+    .eq('brief_id', briefId)
+    .eq('designer_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (existing) {
+    return res.status(200).json({ success: true, contract: existing });
+  }
 
   // Load the brief with form snapshot and quote
   const { data: brief, error: briefErr } = await supabase
