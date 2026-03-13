@@ -98,7 +98,7 @@ export default function WaitlistPage() {
 
   return (
     <div
-      className="h-screen flex flex-col items-center justify-center px-6 relative overflow-hidden"
+      className="h-screen flex flex-col items-center justify-center px-8 sm:px-12 relative overflow-hidden"
       style={{ backgroundColor: "var(--th-bg)" }}
     >
       {/* Background orbs */}
