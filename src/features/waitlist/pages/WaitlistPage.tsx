@@ -154,13 +154,7 @@ export default function WaitlistPage() {
           {/* Title */}
           <h1
             className="text-[40px] sm:text-[56px] font-light tracking-[-0.04em] leading-[1.1] mb-4"
-            style={{
-              background: isDark
-                ? "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.5) 100%)"
-                : "linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
+            style={{ color: isDark ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.8)" }}
           >
             Something new is coming
           </h1>
@@ -337,7 +331,7 @@ export default function WaitlistPage() {
       </section>
 
       {/* ───── App Preview Section ───── */}
-      <section className="relative z-10 px-4 pb-24">
+      <section className="relative z-10 px-4 pb-24 flex flex-col items-center">
         <div className="text-center mb-8" style={{ animation: "enter 0.6s ease-out 0.4s both" }}>
           <p className="text-[13px] uppercase tracking-[0.12em] font-medium" style={{ color: "var(--th-text-muted)" }}>
             Sneak peek
