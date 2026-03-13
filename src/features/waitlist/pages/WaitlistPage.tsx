@@ -196,7 +196,7 @@ export default function WaitlistPage() {
           {/* Subtitle line 2 */}
           <p
             className="text-center text-[15px] sm:text-[16px] leading-relaxed"
-            style={{ color: "var(--th-text-secondary)", marginBottom: 16 }}
+            style={{ color: "var(--th-text-secondary)", marginBottom: 24 }}
           >
             All in one platform for web designers.
           </p>
