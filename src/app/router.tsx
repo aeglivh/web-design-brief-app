@@ -1,13 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/features/auth/lib/supabase";
 import { ThemeProvider } from "@/lib/theme";
 import "@/styles/globals.css";
 
-// Lazy load pages for code splitting
-const SplashPage = React.lazy(
-  () => import("@/features/splash/pages/SplashPage")
+// Secret bypass key — visit /login?key=briefflow-admin to access the real app
+const BYPASS_KEY = "briefflow-admin";
+const BYPASS_STORAGE_KEY = "bf_bypass";
+
+function hasBypass() {
+  return sessionStorage.getItem(BYPASS_STORAGE_KEY) === "1";
+}
+
+// Waitlist mode — all auth/dashboard routes blocked unless bypass is set
+const WaitlistPage = React.lazy(
+  () => import("@/features/waitlist/pages/WaitlistPage")
 );
 const LoginPage = React.lazy(
   () => import("@/features/auth/pages/LoginPage")
@@ -29,13 +37,27 @@ function Loading() {
 
 function Root() {
   const session = useAuth();
-  if (session === undefined) return <Loading />;
-  if (session) return <Navigate to="/dashboard" replace />;
-  return <SplashPage />;
+  if (hasBypass()) {
+    if (session === undefined) return <Loading />;
+    if (session) return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/login" replace />;
+  }
+  return <WaitlistPage />;
+}
+
+function LoginGate() {
+  const [params] = useSearchParams();
+  // Check for bypass key in URL — store it for the session
+  if (params.get("key") === BYPASS_KEY) {
+    sessionStorage.setItem(BYPASS_STORAGE_KEY, "1");
+  }
+  if (hasBypass()) return <LoginPage />;
+  return <Navigate to="/" replace />;
 }
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const session = useAuth();
+  if (!hasBypass()) return <Navigate to="/" replace />;
   if (session === undefined) return <Loading />;
   if (!session) return <Navigate to="/login" replace />;
   return <>{children}</>;
@@ -49,7 +71,7 @@ export function App() {
         <React.Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<Root />} />
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/login" element={<LoginGate />} />
             <Route
               path="/dashboard"
               element={
@@ -59,6 +81,8 @@ export function App() {
               }
             />
             <Route path="/studio/:slug" element={<IntakeFormPage />} />
+            {/* Catch-all → waitlist */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </React.Suspense>
       </BrowserRouter>
