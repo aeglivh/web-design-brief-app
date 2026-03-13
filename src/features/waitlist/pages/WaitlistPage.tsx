@@ -366,7 +366,7 @@ export default function WaitlistPage() {
       {/* Curtain modal */}
       {showInfo && (
         <div
-          className="fixed inset-0 z-50 overflow-y-auto"
+          className="fixed inset-0 z-50 overflow-y-auto flex justify-center"
           onClick={() => setShowInfo(false)}
         >
           {/* Backdrop */}
@@ -379,7 +379,7 @@ export default function WaitlistPage() {
           />
           {/* Curtain panel */}
           <div
-            className="relative w-full max-w-[680px] mx-auto px-5"
+            className="relative w-full max-w-[680px] px-5"
             style={{
               animation: "curtain-drop 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
