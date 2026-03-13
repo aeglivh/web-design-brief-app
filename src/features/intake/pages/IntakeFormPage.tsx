@@ -59,6 +59,20 @@ export default function IntakeFormPage() {
   const headingFont = designer?.heading_font || "Inter";
   const bodyFont = designer?.body_font || "Inter";
 
+  // Dynamically load Google Fonts for branding
+  useEffect(() => {
+    const fonts = new Set([headingFont, bodyFont].filter((f) => f && f !== "Inter"));
+    if (fonts.size === 0) return;
+    const families = [...fonts].map((f) => `family=${f.replace(/ /g, "+")}:wght@300;400;500;600;700`).join("&");
+    const id = "branding-fonts";
+    if (document.getElementById(id)) document.getElementById(id)!.remove();
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?${families}&display=swap`;
+    document.head.appendChild(link);
+  }, [headingFont, bodyFont]);
+
   const onSubmit = async (data: IntakeFormData) => {
     setSubmitting(true);
     setError("");

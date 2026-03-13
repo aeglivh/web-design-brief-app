@@ -121,6 +121,22 @@ export default function DashboardPage() {
   const barColor = brandingForm?.dashboard_bar_colour || designer?.dashboard_bar_colour || "#0f172a";
   const bgColor = brandingForm?.dashboard_bg_colour || designer?.dashboard_bg_colour || "";
 
+  // Dynamically load Google Fonts for branding preview
+  const headingFont = brandingForm?.heading_font || designer?.heading_font || "Inter";
+  const bodyFont = brandingForm?.body_font || designer?.body_font || "Inter";
+  useEffect(() => {
+    const fonts = new Set([headingFont, bodyFont].filter((f) => f && f !== "Inter"));
+    if (fonts.size === 0) return;
+    const families = [...fonts].map((f) => `family=${f.replace(/ /g, "+")}:wght@300;400;500;600;700`).join("&");
+    const id = "branding-fonts";
+    if (document.getElementById(id)) document.getElementById(id)!.remove();
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?${families}&display=swap`;
+    document.head.appendChild(link);
+  }, [headingFont, bodyFont]);
+
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Horizontal tabs */}
