@@ -1,4 +1,5 @@
-import { Modal, Button } from "@/components/ui";
+import { useState } from "react";
+import { Modal } from "@/components/ui";
 import { ContractDocument } from "./ContractDocument";
 import type { ContractData } from "@/lib/types";
 
@@ -13,7 +14,7 @@ interface ContractModalProps {
 }
 
 export function ContractModal({
-  data,
+  data: initialData,
   studioName,
   clientName,
   businessName,
@@ -21,11 +22,16 @@ export function ContractModal({
   accent,
   onClose,
 }: ContractModalProps) {
+  const [data, setData] = useState<ContractData>(initialData);
+
   return (
     <Modal open onClose={onClose} size="xl" printable>
       {/* Toolbar */}
       <div className="flex items-center justify-between h-12 px-5 bg-th-surface rounded-t-2xl no-print">
-        <span className="text-th-muted text-[12px] font-medium">Project Contract</span>
+        <span className="text-th-muted text-[12px] font-medium">
+          Project Contract
+          <span className="text-th-muted/50 ml-2">— click any text to edit</span>
+        </span>
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => window.print()}
@@ -47,20 +53,23 @@ export function ContractModal({
 
       {/* Document */}
       <div
-        className="px-10 py-10 overflow-y-auto max-h-[75vh] print-flatten"
+        className="overflow-y-auto max-h-[80vh] print-flatten"
         style={{
-          background: "var(--th-bg)",
+          background: "#ffffff",
           borderRadius: "0 0 24px 24px",
         }}
       >
-        <ContractDocument
-          data={data}
-          studioName={studioName}
-          clientName={clientName}
-          businessName={businessName}
-          currency={currency}
-          accent={accent}
-        />
+        <div style={{ padding: "48px 56px" }}>
+          <ContractDocument
+            data={data}
+            onChange={setData}
+            studioName={studioName}
+            clientName={clientName}
+            businessName={businessName}
+            currency={currency}
+            accent={accent}
+          />
+        </div>
       </div>
     </Modal>
   );

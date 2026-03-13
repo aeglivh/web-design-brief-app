@@ -2,6 +2,7 @@ import type { ContractData } from "@/lib/types";
 
 interface ContractDocumentProps {
   data: ContractData;
+  onChange: (data: ContractData) => void;
   studioName: string;
   clientName: string;
   businessName: string;
@@ -9,8 +10,57 @@ interface ContractDocumentProps {
   accent: string;
 }
 
+function EditableText({
+  value,
+  onChange,
+  tag: Tag = "p",
+  className,
+  style,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  tag?: "p" | "span" | "td" | "li" | "strong";
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <Tag
+      contentEditable
+      suppressContentEditableWarning
+      onBlur={(e) => {
+        const text = (e.target as HTMLElement).innerText.trim();
+        if (text !== value) onChange(text);
+      }}
+      className={className}
+      style={{
+        outline: "none",
+        borderRadius: 4,
+        transition: "background 0.15s",
+        cursor: "text",
+        ...style,
+      }}
+      onFocus={(e) => {
+        (e.target as HTMLElement).style.background = "rgba(99,102,241,0.06)";
+      }}
+      onMouseOver={(e) => {
+        if (document.activeElement !== e.target)
+          (e.target as HTMLElement).style.background = "rgba(99,102,241,0.03)";
+      }}
+      onMouseOut={(e) => {
+        if (document.activeElement !== e.target)
+          (e.target as HTMLElement).style.background = "transparent";
+      }}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      {...({ onBlurCapture: (e: any) => { (e.target as HTMLElement).style.background = "transparent"; } } as any)}
+    >
+      {value}
+    </Tag>
+  );
+}
+
 export function ContractDocument({
   data,
+  onChange,
   studioName,
   clientName,
   businessName,
@@ -26,28 +76,41 @@ export function ContractDocument({
   const fmt = (n: number) =>
     new Intl.NumberFormat("en", { style: "decimal", minimumFractionDigits: 2 }).format(n);
 
+  const updateField = <K extends keyof ContractData>(key: K, value: ContractData[K]) => {
+    onChange({ ...data, [key]: value });
+  };
+
   return (
-    <div className="max-w-3xl mx-auto bg-white text-slate-800 text-sm leading-relaxed print:text-[11pt] print:leading-normal print:max-w-none">
+    <div
+      className="max-w-3xl mx-auto text-[14px] leading-[1.7] print:text-[11pt] print:leading-normal print:max-w-none"
+      style={{ color: "#1e293b", fontFamily: "Inter, system-ui, sans-serif" }}
+    >
       {/* ── Header ─────────────────────────────────────────────── */}
-      <div className="text-center mb-10 print:mb-8">
+      <div className="text-center" style={{ marginBottom: 40 }}>
         <div
-          className="inline-block w-10 h-1 rounded-full mb-4 print:hidden"
-          style={{ backgroundColor: accent }}
+          className="inline-block w-10 h-1 rounded-full print:hidden"
+          style={{ backgroundColor: accent, marginBottom: 16 }}
         />
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900 print:text-xl">
+        <h1
+          className="font-bold tracking-tight print:text-xl"
+          style={{ fontSize: 22, color: "#0f172a", marginBottom: 8 }}
+        >
           Scope of Work &amp; Project Agreement
         </h1>
-        <p className="mt-2 text-xs text-slate-500 uppercase tracking-widest">
+        <p
+          className="uppercase tracking-widest"
+          style={{ fontSize: 11, color: "#94a3b8" }}
+        >
           {studioName} &mdash; {today}
         </p>
       </div>
 
       {/* ── Parties ────────────────────────────────────────────── */}
-      <p className="mb-8 text-slate-600 print:mb-6">
+      <p style={{ marginBottom: 32, color: "#475569" }}>
         This agreement is entered into between{" "}
-        <strong className="text-slate-900">{studioName}</strong> (the
+        <strong style={{ color: "#0f172a" }}>{studioName}</strong> (the
         &ldquo;Designer&rdquo;) and{" "}
-        <strong className="text-slate-900">
+        <strong style={{ color: "#0f172a" }}>
           {clientName}
           {businessName ? ` / ${businessName}` : ""}
         </strong>{" "}
@@ -56,137 +119,237 @@ export function ContractDocument({
 
       {/* ── 1. Scope of Work ───────────────────────────────────── */}
       <Section n={1} title="Scope of Work" accent={accent}>
-        <p className="whitespace-pre-line">{data.scopeOfWork}</p>
+        <EditableText
+          value={data.scopeOfWork}
+          onChange={(v) => updateField("scopeOfWork", v)}
+          className="whitespace-pre-line"
+          style={{ color: "#334155" }}
+        />
       </Section>
 
       {/* ── 2. Deliverables ────────────────────────────────────── */}
       <Section n={2} title="Deliverables" accent={accent}>
-        <ol className="list-decimal list-inside space-y-2">
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {data.deliverables.map((d, i) => (
-            <li key={i}>
-              <strong>{d.item}</strong>
-              {d.description && (
-                <span className="text-slate-600"> &mdash; {d.description}</span>
-              )}
-            </li>
+            <div key={i} style={{ display: "flex", gap: 8 }}>
+              <span style={{ color: "#94a3b8", fontWeight: 600, minWidth: 20 }}>{i + 1}.</span>
+              <div>
+                <EditableText
+                  tag="strong"
+                  value={d.item}
+                  onChange={(v) => {
+                    const updated = [...data.deliverables];
+                    updated[i] = { ...updated[i], item: v };
+                    updateField("deliverables", updated);
+                  }}
+                  style={{ color: "#0f172a" }}
+                />
+                {d.description && (
+                  <>
+                    <span style={{ color: "#94a3b8" }}> — </span>
+                    <EditableText
+                      tag="span"
+                      value={d.description}
+                      onChange={(v) => {
+                        const updated = [...data.deliverables];
+                        updated[i] = { ...updated[i], description: v };
+                        updateField("deliverables", updated);
+                      }}
+                      style={{ color: "#64748b" }}
+                    />
+                  </>
+                )}
+              </div>
+            </div>
           ))}
-        </ol>
+        </div>
       </Section>
 
       {/* ── 3. Exclusions ──────────────────────────────────────── */}
       <Section n={3} title="Exclusions" accent={accent}>
-        <ul className="list-disc list-inside space-y-1 text-slate-600">
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {data.exclusions.map((ex, i) => (
-            <li key={i}>{ex}</li>
+            <div key={i} style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
+              <span style={{ color: "#94a3b8" }}>•</span>
+              <EditableText
+                tag="span"
+                value={ex}
+                onChange={(v) => {
+                  const updated = [...data.exclusions];
+                  updated[i] = v;
+                  updateField("exclusions", updated);
+                }}
+                style={{ color: "#64748b" }}
+              />
+            </div>
           ))}
-        </ul>
+        </div>
       </Section>
 
       {/* ── 4. Revision Policy ─────────────────────────────────── */}
       <Section n={4} title="Revision Policy" accent={accent}>
-        <p>
-          Design revisions: <strong>{data.revisionPolicy.designRevisions} rounds</strong>.
+        <p style={{ color: "#334155", marginBottom: 8 }}>
+          Design revisions: <strong style={{ color: "#0f172a" }}>{data.revisionPolicy.designRevisions} rounds</strong>.
           Development revisions:{" "}
-          <strong>{data.revisionPolicy.developmentRevisions} rounds</strong>.
+          <strong style={{ color: "#0f172a" }}>{data.revisionPolicy.developmentRevisions} rounds</strong>.
           Additional revisions are billed at{" "}
-          <strong>
+          <strong style={{ color: "#0f172a" }}>
             {currency} {fmt(data.revisionPolicy.additionalRate)}/hr
-          </strong>
-          .
+          </strong>.
         </p>
         {data.revisionPolicy.description && (
-          <p className="mt-2 text-slate-600 whitespace-pre-line">
-            {data.revisionPolicy.description}
-          </p>
+          <EditableText
+            value={data.revisionPolicy.description}
+            onChange={(v) =>
+              updateField("revisionPolicy", { ...data.revisionPolicy, description: v })
+            }
+            className="whitespace-pre-line"
+            style={{ color: "#64748b" }}
+          />
         )}
       </Section>
 
       {/* ── 5. Project Timeline ────────────────────────────────── */}
       <Section n={5} title="Project Timeline" accent={accent}>
-        <p className="mb-3 text-slate-600">
+        <p style={{ color: "#64748b", marginBottom: 16 }}>
           Estimated total duration:{" "}
-          <strong className="text-slate-900">{data.timeline.totalWeeks} weeks</strong>
+          <strong style={{ color: "#0f172a" }}>{data.timeline.totalWeeks} weeks</strong>
         </p>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b-2 border-slate-200">
-                <th className="py-2 pr-4 font-semibold text-slate-900">Phase</th>
-                <th className="py-2 pr-4 font-semibold text-slate-900">Duration</th>
-                <th className="py-2 font-semibold text-slate-900">Deliverable</th>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ borderBottom: "2px solid #e2e8f0" }}>
+              <th style={{ padding: "10px 16px 10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>Phase</th>
+              <th style={{ padding: "10px 16px 10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>Duration</th>
+              <th style={{ padding: "10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>Deliverable</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.timeline.milestones.map((m, i) => (
+              <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                <td style={{ padding: "12px 16px 12px 0", color: "#334155" }}>
+                  <EditableText
+                    tag="span"
+                    value={m.phase}
+                    onChange={(v) => {
+                      const updated = [...data.timeline.milestones];
+                      updated[i] = { ...updated[i], phase: v };
+                      updateField("timeline", { ...data.timeline, milestones: updated });
+                    }}
+                  />
+                </td>
+                <td style={{ padding: "12px 16px 12px 0", color: "#64748b" }}>
+                  <EditableText
+                    tag="span"
+                    value={m.weeks}
+                    onChange={(v) => {
+                      const updated = [...data.timeline.milestones];
+                      updated[i] = { ...updated[i], weeks: v };
+                      updateField("timeline", { ...data.timeline, milestones: updated });
+                    }}
+                  />
+                </td>
+                <td style={{ padding: "12px 0", color: "#64748b" }}>
+                  <EditableText
+                    tag="span"
+                    value={m.deliverable}
+                    onChange={(v) => {
+                      const updated = [...data.timeline.milestones];
+                      updated[i] = { ...updated[i], deliverable: v };
+                      updateField("timeline", { ...data.timeline, milestones: updated });
+                    }}
+                  />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {data.timeline.milestones.map((m, i) => (
-                <tr key={i} className="border-b border-slate-100">
-                  <td className="py-2 pr-4">{m.phase}</td>
-                  <td className="py-2 pr-4 text-slate-600">{m.weeks}</td>
-                  <td className="py-2 text-slate-600">{m.deliverable}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </Section>
 
       {/* ── 6. Payment Schedule ────────────────────────────────── */}
       <Section n={6} title="Payment Schedule" accent={accent}>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b-2 border-slate-200">
-                <th className="py-2 pr-4 font-semibold text-slate-900">Milestone</th>
-                <th className="py-2 pr-4 font-semibold text-slate-900 text-right">%</th>
-                <th className="py-2 font-semibold text-slate-900 text-right">Amount</th>
+        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <thead>
+            <tr style={{ borderBottom: "2px solid #e2e8f0" }}>
+              <th style={{ padding: "10px 16px 10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>Milestone</th>
+              <th style={{ padding: "10px 16px 10px 0", textAlign: "right", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>%</th>
+              <th style={{ padding: "10px 0", textAlign: "right", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.paymentSchedule.map((p, i) => (
+              <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                <td style={{ padding: "12px 16px 12px 0", color: "#334155" }}>
+                  <EditableText
+                    tag="span"
+                    value={p.milestone}
+                    onChange={(v) => {
+                      const updated = [...data.paymentSchedule];
+                      updated[i] = { ...updated[i], milestone: v };
+                      updateField("paymentSchedule", updated);
+                    }}
+                  />
+                </td>
+                <td style={{ padding: "12px 16px 12px 0", textAlign: "right", color: "#64748b" }}>{p.percentage}%</td>
+                <td style={{ padding: "12px 0", textAlign: "right", fontWeight: 500, color: "#0f172a" }}>
+                  {currency} {fmt(p.amount)}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {data.paymentSchedule.map((p, i) => (
-                <tr key={i} className="border-b border-slate-100">
-                  <td className="py-2 pr-4">{p.milestone}</td>
-                  <td className="py-2 pr-4 text-right text-slate-600">{p.percentage}%</td>
-                  <td className="py-2 text-right font-medium">
-                    {currency} {fmt(p.amount)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </Section>
 
       {/* ── 7. Change Requests ─────────────────────────────────── */}
       <Section n={7} title="Change Requests" accent={accent}>
-        <p className="whitespace-pre-line">{data.changeRequestProcess}</p>
+        <EditableText
+          value={data.changeRequestProcess}
+          onChange={(v) => updateField("changeRequestProcess", v)}
+          className="whitespace-pre-line"
+          style={{ color: "#334155" }}
+        />
       </Section>
 
       {/* ── 8. Intellectual Property ───────────────────────────── */}
       <Section n={8} title="Intellectual Property" accent={accent}>
-        <p className="whitespace-pre-line">{data.ipTransfer}</p>
+        <EditableText
+          value={data.ipTransfer}
+          onChange={(v) => updateField("ipTransfer", v)}
+          className="whitespace-pre-line"
+          style={{ color: "#334155" }}
+        />
       </Section>
 
       {/* ── 9. Cancellation ────────────────────────────────────── */}
       <Section n={9} title="Cancellation" accent={accent}>
-        <p className="whitespace-pre-line">{data.cancellationTerms}</p>
+        <EditableText
+          value={data.cancellationTerms}
+          onChange={(v) => updateField("cancellationTerms", v)}
+          className="whitespace-pre-line"
+          style={{ color: "#334155" }}
+        />
       </Section>
 
       {/* ── 10. Warranty ───────────────────────────────────────── */}
       <Section n={10} title="Warranty" accent={accent}>
-        <p className="whitespace-pre-line">{data.warranty}</p>
+        <EditableText
+          value={data.warranty}
+          onChange={(v) => updateField("warranty", v)}
+          className="whitespace-pre-line"
+          style={{ color: "#334155" }}
+        />
       </Section>
 
-      {/* ── 11. Signatures ─────────────────────────────────────── */}
-      <div className="mt-12 pt-8 border-t border-slate-200 print:mt-10 print:pt-6">
-        <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-8">
+      {/* ── Signatures ─────────────────────────────────────── */}
+      <div style={{ marginTop: 48, paddingTop: 32, borderTop: "1px solid #e2e8f0" }}>
+        <p
+          className="uppercase tracking-widest"
+          style={{ fontSize: 11, fontWeight: 600, color: "#94a3b8", marginBottom: 32 }}
+        >
           Signatures
-        </h3>
-        <div className="grid grid-cols-2 gap-12">
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
           <SignatureBlock label="Designer" name={studioName} />
-          <SignatureBlock
-            label="Client"
-            name={clientName}
-            business={businessName}
-          />
+          <SignatureBlock label="Client" name={clientName} business={businessName} />
         </div>
       </div>
     </div>
@@ -207,17 +370,38 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mb-8 print:mb-6">
-      <h2 className="flex items-center gap-2 text-base font-semibold text-slate-900 mb-3">
+    <section style={{ marginBottom: 36 }}>
+      <h2
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          fontSize: 15,
+          fontWeight: 600,
+          color: "#0f172a",
+          marginBottom: 14,
+        }}
+      >
         <span
-          className="inline-flex items-center justify-center w-6 h-6 rounded-full text-[10px] font-bold text-white print:border print:border-slate-400 print:text-slate-700 print:bg-transparent"
-          style={{ backgroundColor: accent }}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 26,
+            height: 26,
+            borderRadius: "50%",
+            fontSize: 11,
+            fontWeight: 700,
+            color: "#fff",
+            backgroundColor: accent,
+            flexShrink: 0,
+          }}
         >
           {n}
         </span>
         {title}
       </h2>
-      <div className="pl-8">{children}</div>
+      <div style={{ paddingLeft: 36 }}>{children}</div>
     </section>
   );
 }
@@ -235,12 +419,17 @@ function SignatureBlock({
 }) {
   return (
     <div>
-      <p className="text-xs uppercase tracking-widest text-slate-400 mb-6">{label}</p>
-      <div className="border-b border-slate-300 mb-2 h-10" />
-      <p className="text-sm font-medium text-slate-900">{name}</p>
-      {business && <p className="text-xs text-slate-500">{business}</p>}
-      <div className="border-b border-slate-300 mb-2 mt-6 h-8" />
-      <p className="text-xs text-slate-400">Date</p>
+      <p
+        className="uppercase tracking-widest"
+        style={{ fontSize: 11, color: "#94a3b8", marginBottom: 28 }}
+      >
+        {label}
+      </p>
+      <div style={{ borderBottom: "1px solid #cbd5e1", height: 40, marginBottom: 8 }} />
+      <p style={{ fontSize: 14, fontWeight: 500, color: "#0f172a" }}>{name}</p>
+      {business && <p style={{ fontSize: 12, color: "#94a3b8" }}>{business}</p>}
+      <div style={{ borderBottom: "1px solid #cbd5e1", height: 32, marginTop: 24, marginBottom: 8 }} />
+      <p style={{ fontSize: 12, color: "#94a3b8" }}>Date</p>
     </div>
   );
 }
