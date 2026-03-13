@@ -144,7 +144,7 @@ export default function WaitlistPage() {
         style={{ animation: "enter 0.6s ease-out" }}
       >
         {/* Logo */}
-        <div className="flex justify-center mb-10">
+        <div className="flex justify-center mb-6">
           <div
             className="w-12 h-12 rounded-xl flex items-center justify-center"
             style={{
@@ -169,7 +169,7 @@ export default function WaitlistPage() {
         </h1>
 
         <p
-          className="text-center text-[15px] sm:text-[16px] leading-relaxed mb-10 max-w-sm mx-auto"
+          className="text-center text-[15px] sm:text-[16px] leading-relaxed mb-8 max-w-sm mx-auto"
           style={{ color: "var(--th-text-secondary)" }}
         >
           Client briefs, AI-powered quotes, and contracts — all in one platform for web designers.
@@ -177,7 +177,7 @@ export default function WaitlistPage() {
 
         {/* Countdown */}
         {!countdown.expired && (
-          <div className="flex items-center justify-center gap-1 mb-10">
+          <div className="flex items-center justify-center gap-1 mb-8">
             {[
               { value: countdown.days, label: "days" },
               { value: countdown.hours, label: "hrs" },
@@ -220,12 +220,6 @@ export default function WaitlistPage() {
           </div>
         )}
 
-        {/* Divider */}
-        <div
-          className="h-px w-full my-10"
-          style={{ backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" }}
-        />
-
         {/* Form / Success / Expired */}
         {success ? (
           <div className="text-center">
@@ -265,8 +259,8 @@ export default function WaitlistPage() {
         ) : (
           <div>
             {error && <Alert variant="error" className="mb-4">{error}</Alert>}
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="flex gap-4">
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div className="flex gap-3">
                 <input
                   type="text"
                   value={name}
@@ -309,7 +303,7 @@ export default function WaitlistPage() {
             </form>
 
             {/* Social proof + incentive */}
-            <div className="flex items-center justify-center gap-3 mt-8">
+            <div className="flex items-center justify-center gap-3 mt-6">
               {spotCount !== null && spotCount > 0 && (
                 <>
                   {/* Avatar stack */}
