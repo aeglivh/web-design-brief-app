@@ -3,7 +3,7 @@ import { useTheme } from "@/lib/theme";
 import { API_BASE } from "@/lib/api";
 import { Alert } from "@/components/ui";
 
-const WAITLIST_CLOSES = new Date("2026-03-20T23:59:59Z");
+const WAITLIST_CLOSES = new Date("2026-03-18T23:59:59Z");
 
 function useCountdown(target: Date) {
   const calc = useCallback(() => {
