@@ -56,7 +56,7 @@ export default function WaitlistPage() {
 
   useEffect(() => {
     fetch(`${API_BASE}/api/waitlist`)
-      .then((r) => r.json())
+      .then((r) => r.ok ? r.json() : Promise.reject())
       .then((d) => setSpotCount(d.count || 0))
       .catch(() => {});
   }, []);
@@ -73,10 +73,17 @@ export default function WaitlistPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, name }),
       });
+      if (!res.ok) {
+        const text = await res.text();
+        let msg = "Something went wrong";
+        try { msg = JSON.parse(text).error || msg; } catch { /* not JSON */ }
+        throw new Error(msg);
+      }
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Something went wrong");
-      setSuccess(true);
-      setSpotCount((c) => (c !== null ? c + 1 : 1));
+      if (data.ok) {
+        setSuccess(true);
+        setSpotCount((c) => (c !== null ? c + 1 : 1));
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     }
@@ -84,8 +91,8 @@ export default function WaitlistPage() {
   };
 
   const inputStyle = {
-    backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
-    border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
+    backgroundColor: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)",
+    border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}`,
     color: "var(--th-text)",
   };
 
@@ -139,18 +146,18 @@ export default function WaitlistPage() {
 
       {/* Content */}
       <div
-        className="relative z-10 w-full max-w-md text-center"
+        className="relative z-10 w-full max-w-xl text-center"
         style={{ animation: "enter 0.6s ease-out" }}
       >
         {/* Logo */}
         <div
-          className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-6"
+          className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-10"
           style={{
             background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-            boxShadow: "0 4px 16px -4px rgba(99,102,241,0.5)",
+            boxShadow: "0 8px 24px -6px rgba(99,102,241,0.5)",
           }}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 2L2 7l10 5 10-5-10-5z" />
             <path d="M2 17l10 5 10-5" />
             <path d="M2 12l10 5 10-5" />
@@ -159,34 +166,36 @@ export default function WaitlistPage() {
 
         {/* Title */}
         <h1
-          className="text-[36px] sm:text-[44px] font-semibold tracking-[-0.03em] leading-[1.1] mb-3"
+          className="text-[48px] sm:text-[64px] font-semibold tracking-[-0.04em] leading-[1.05] mb-5"
           style={{ color: "var(--th-text)" }}
         >
-          Something new is coming
+          Something new
+          <br />
+          is coming
         </h1>
 
-        <p className="text-[15px] max-w-sm mx-auto mb-8 leading-relaxed" style={{ color: "var(--th-text-muted)" }}>
+        <p className="text-[17px] sm:text-[19px] max-w-md mx-auto mb-12 leading-relaxed" style={{ color: "var(--th-text-muted)" }}>
           Client briefs, AI-powered quotes, and contracts — all in one
           white-label platform for web designers.
         </p>
 
         {/* Countdown */}
         {!countdown.expired && (
-          <div className="flex items-center justify-center gap-5 mb-8">
+          <div className="flex items-center justify-center gap-8 mb-12">
             {[
               { value: countdown.days, label: "days" },
-              { value: countdown.hours, label: "hrs" },
+              { value: countdown.hours, label: "hours" },
               { value: countdown.minutes, label: "min" },
               { value: countdown.seconds, label: "sec" },
             ].map((unit) => (
               <div key={unit.label} className="flex flex-col items-center">
                 <span
-                  className="text-[32px] font-light tabular-nums tracking-[-0.02em] leading-none"
+                  className="text-[40px] sm:text-[48px] font-light tabular-nums tracking-[-0.02em] leading-none"
                   style={{ color: "var(--th-text)" }}
                 >
                   {String(unit.value).padStart(2, "0")}
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.1em] mt-1" style={{ color: "var(--th-text-muted)" }}>
+                <span className="text-[11px] uppercase tracking-[0.12em] mt-2" style={{ color: "var(--th-text-muted)" }}>
                   {unit.label}
                 </span>
               </div>
@@ -196,47 +205,47 @@ export default function WaitlistPage() {
 
         {/* Form / Success / Expired */}
         {success ? (
-          <div className="mb-8">
+          <div className="mb-12">
             <div
-              className="w-10 h-10 rounded-full mx-auto mb-3 flex items-center justify-center"
+              className="w-12 h-12 rounded-full mx-auto mb-4 flex items-center justify-center"
               style={{ background: "linear-gradient(135deg, #34d399, #10b981)" }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <p className="text-[16px] font-semibold mb-1" style={{ color: "var(--th-text)" }}>
+            <p className="text-[18px] font-semibold mb-2" style={{ color: "var(--th-text)" }}>
               You're on the list!
             </p>
-            <p className="text-[13px] leading-relaxed" style={{ color: "var(--th-text-muted)" }}>
+            <p className="text-[15px] leading-relaxed" style={{ color: "var(--th-text-muted)" }}>
               We'll notify you at launch.{" "}
               <strong style={{ color: "var(--th-text)" }}>3-6 months free</strong> for early supporters.
             </p>
             {spotCount !== null && (
-              <p className="text-[12px] font-mono mt-2" style={{ color: "var(--th-text-muted)" }}>
+              <p className="text-[13px] font-mono mt-3" style={{ color: "var(--th-text-muted)" }}>
                 #{spotCount} on the waitlist
               </p>
             )}
           </div>
         ) : countdown.expired ? (
-          <div className="mb-8">
-            <p className="text-[15px] font-medium" style={{ color: "var(--th-text)" }}>
+          <div className="mb-12">
+            <p className="text-[17px] font-medium" style={{ color: "var(--th-text)" }}>
               The waitlist is now closed.
             </p>
-            <p className="text-[13px] mt-1" style={{ color: "var(--th-text-muted)" }}>
+            <p className="text-[15px] mt-2" style={{ color: "var(--th-text-muted)" }}>
               Stay tuned for our launch.
             </p>
           </div>
         ) : (
-          <div className="mb-8">
-            {error && <Alert variant="error" className="mb-3">{error}</Alert>}
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+          <div className="mb-12">
+            {error && <Alert variant="error" className="mb-4">{error}</Alert>}
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto">
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Name"
-                className="h-11 rounded-xl px-4 text-[13px] outline-none transition-all duration-200 sm:w-[130px]"
+                className="h-12 rounded-xl px-5 text-[14px] outline-none transition-all duration-200 sm:w-[140px]"
                 style={inputStyle}
               />
               <input
@@ -245,34 +254,34 @@ export default function WaitlistPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@studio.com"
-                className="h-11 rounded-xl px-4 text-[13px] outline-none transition-all duration-200 flex-1"
+                className="h-12 rounded-xl px-5 text-[14px] outline-none transition-all duration-200 flex-1"
                 style={inputStyle}
               />
               <button
                 type="submit"
                 disabled={loading || !email}
-                className="h-11 px-5 rounded-xl text-[13px] font-semibold transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
+                className="h-12 px-7 rounded-xl text-[14px] font-semibold transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer whitespace-nowrap"
                 style={{
                   background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
                   color: "white",
-                  boxShadow: "0 4px 12px -4px rgba(99,102,241,0.4)",
+                  boxShadow: "0 4px 16px -4px rgba(99,102,241,0.5)",
                   border: "none",
                 }}
               >
                 {loading ? "Joining..." : "Join waitlist"}
               </button>
             </form>
-            <p className="text-[11px] mt-2.5" style={{ color: "var(--th-text-muted)" }}>
+            <p className="text-[13px] mt-4" style={{ color: "var(--th-text-muted)" }}>
               Early supporters get <strong style={{ color: isDark ? "#a5b4fc" : "#6366f1" }}>3-6 months free</strong> when we launch.
             </p>
           </div>
         )}
 
-        {/* Features — single line */}
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+        {/* Features */}
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5">
           {FEATURES.map((f, i) => (
-            <span key={f} className="text-[11px]" style={{ color: "var(--th-text-muted)" }}>
-              {i > 0 && <span className="mr-4" style={{ opacity: 0.3 }}>·</span>}
+            <span key={f} className="text-[13px]" style={{ color: "var(--th-text-muted)" }}>
+              {i > 0 && <span className="mr-5" style={{ opacity: 0.3 }}>·</span>}
               {f}
             </span>
           ))}
