@@ -33,6 +33,18 @@ export function ContractModal({
           <span className="text-th-muted/50 ml-2">— click any text to edit</span>
         </span>
         <div className="flex items-center gap-1.5">
+          <a
+            href="https://docuseal.com/sign_yourself"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="h-8 px-3 rounded-lg text-[11px] font-medium text-th-muted hover:text-th-secondary hover:bg-th-surface-hover transition-all cursor-pointer inline-flex items-center gap-1.5"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+            </svg>
+            Sign with DocuSeal
+          </a>
+          <div className="w-px h-4 bg-th-border mx-0.5" />
           <button
             onClick={() => window.print()}
             className="h-8 px-3 rounded-lg text-[11px] font-medium text-th-muted hover:text-th-secondary hover:bg-th-surface-hover transition-all cursor-pointer"
