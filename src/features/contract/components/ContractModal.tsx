@@ -78,7 +78,7 @@ export function ContractModal({
           )}
           <div className="w-px h-4 bg-th-border mx-0.5" />
           <a
-            href="https://docuseal.com/sign_yourself"
+            href="https://www.docuseal.com/sign-documents-online"
             target="_blank"
             rel="noopener noreferrer"
             className="h-8 px-3 rounded-lg text-[11px] font-medium text-th-muted hover:text-th-secondary hover:bg-th-surface-hover transition-all cursor-pointer inline-flex items-center gap-1.5"
