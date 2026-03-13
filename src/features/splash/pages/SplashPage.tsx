@@ -33,27 +33,22 @@ export default function SplashPage() {
         style={{ animation: "enter 0.6s ease-out" }}
       >
         {/* Logo mark */}
-        <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-8 backdrop-blur-sm"
-          style={{
-            backgroundColor: "var(--th-surface)",
-            border: "1px solid var(--th-border)",
-          }}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--th-icon)"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="opacity-80"
-          >
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
+        <div className="flex justify-center mb-8">
+          <svg width="56" height="56" viewBox="0 0 512 512" fill="none">
+            <defs>
+              <linearGradient id="spt" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#818cf8"/>
+                <stop offset="100%" stopColor="#6366f1"/>
+              </linearGradient>
+              <linearGradient id="spm" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor="#6366f1"/>
+                <stop offset="100%" stopColor="#4f46e5"/>
+              </linearGradient>
+            </defs>
+            <path d="M96 340 L256 420 L416 340 L256 260Z" fill="#312e81" opacity="0.7"/>
+            <path d="M96 280 L256 360 L416 280 L256 200Z" fill="url(#spm)" opacity="0.75"/>
+            <path d="M96 220 L256 300 L416 220 L256 140Z" fill="url(#spt)"/>
+            <path d="M96 220 L256 300 L256 140Z" fill="white" opacity="0.08"/>
           </svg>
         </div>
 
@@ -68,7 +63,7 @@ export default function SplashPage() {
             WebkitTextFillColor: "transparent",
           }}
         >
-          Briefflow
+          debrieft
         </h1>
 
         {/* Tagline */}

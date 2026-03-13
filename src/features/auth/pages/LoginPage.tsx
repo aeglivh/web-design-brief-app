@@ -166,20 +166,23 @@ export default function LoginPage() {
           {/* Header: Logo + theme toggle */}
           <div className="relative flex items-center justify-between mb-10">
             <div className="flex items-center gap-2.5">
-              <div
-                className="w-8 h-8 rounded-xl flex items-center justify-center"
-                style={{
-                  background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-                  boxShadow: "0 4px 12px -2px rgba(99,102,241,0.4)",
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                  <path d="M2 17l10 5 10-5" />
-                  <path d="M2 12l10 5 10-5" />
-                </svg>
-              </div>
-              <span className="text-[14px] font-semibold tracking-[-0.01em]" style={{ color: "var(--th-text)" }}>Briefflow</span>
+              <svg width="28" height="28" viewBox="0 0 512 512" fill="none">
+                <defs>
+                  <linearGradient id="lpt" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#818cf8"/>
+                    <stop offset="100%" stopColor="#6366f1"/>
+                  </linearGradient>
+                  <linearGradient id="lpm" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#6366f1"/>
+                    <stop offset="100%" stopColor="#4f46e5"/>
+                  </linearGradient>
+                </defs>
+                <path d="M96 340 L256 420 L416 340 L256 260Z" fill="#312e81" opacity="0.7"/>
+                <path d="M96 280 L256 360 L416 280 L256 200Z" fill="url(#lpm)" opacity="0.75"/>
+                <path d="M96 220 L256 300 L416 220 L256 140Z" fill="url(#lpt)"/>
+                <path d="M96 220 L256 300 L256 140Z" fill="white" opacity="0.08"/>
+              </svg>
+              <span className="text-[14px] font-semibold tracking-[-0.01em]" style={{ color: "var(--th-text)" }}>debrieft</span>
             </div>
 
             <button
