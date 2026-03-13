@@ -27,13 +27,6 @@ function useCountdown(target: Date) {
   return time;
 }
 
-const AVATAR_SHAPES: React.ReactNode[] = [
-  <polygon points="12,3 21,21 3,21" fill="none" stroke="var(--th-text-muted)" strokeWidth="1.5" />,
-  <rect x="5" y="5" width="14" height="14" rx="2" fill="none" stroke="var(--th-text-muted)" strokeWidth="1.5" transform="rotate(45 12 12)" />,
-  <polygon points="12,2 15.1,8.5 22,9.3 17,14.1 18.2,21 12,17.5 5.8,21 7,14.1 2,9.3 8.9,8.5" fill="none" stroke="var(--th-text-muted)" strokeWidth="1.2" />,
-  <circle cx="12" cy="12" r="7" fill="none" stroke="var(--th-text-muted)" strokeWidth="1.5" />,
-  <polygon points="12,3 22,12 12,21 2,12" fill="none" stroke="var(--th-text-muted)" strokeWidth="1.5" />,
-];
 
 export default function WaitlistPage() {
   const { isDark, toggle } = useTheme();
@@ -45,6 +38,7 @@ export default function WaitlistPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [spotCount, setSpotCount] = useState<number | null>(null);
+  const [showInfo, setShowInfo] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Animate border glow
@@ -164,17 +158,22 @@ export default function WaitlistPage() {
         >
           {/* Logo */}
           <div className="flex justify-center" style={{ marginBottom: 32 }}>
-            <div
-              className="w-12 h-12 rounded-xl flex items-center justify-center"
-              style={{
-                background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-                boxShadow: "0 6px 20px -4px rgba(99,102,241,0.5)",
-              }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
+            <div className="flex items-center justify-center">
+              <svg width="80" height="80" viewBox="0 0 512 512" fill="none">
+                <defs>
+                  <linearGradient id="pt" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#818cf8"/>
+                    <stop offset="100%" stopColor="#6366f1"/>
+                  </linearGradient>
+                  <linearGradient id="pm" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#6366f1"/>
+                    <stop offset="100%" stopColor="#4f46e5"/>
+                  </linearGradient>
+                </defs>
+                <path d="M96 340 L256 420 L416 340 L256 260Z" fill="#312e81" opacity="0.7"/>
+                <path d="M96 280 L256 360 L416 280 L256 200Z" fill="url(#pm)" opacity="0.75"/>
+                <path d="M96 220 L256 300 L416 220 L256 140Z" fill="url(#pt)"/>
+                <path d="M96 220 L256 300 L256 140Z" fill="white" opacity="0.08"/>
               </svg>
             </div>
           </div>
@@ -344,45 +343,136 @@ export default function WaitlistPage() {
                   {loading ? "Joining..." : "Join waitlist"}
                 </button>
               </form>
-              {spotCount !== null && (
-                <div className="flex items-center justify-center" style={{ marginTop: 24, gap: 12 }}>
-                  <div className="flex" style={{ paddingLeft: 8 }}>
-                    {AVATAR_SHAPES.slice(0, Math.min(Math.max(spotCount, 5), 5)).map((shape, i) => (
-                      <div
-                        key={i}
-                        className="w-7 h-7 rounded-full flex items-center justify-center"
-                        style={{
-                          backgroundColor: "var(--th-surface)",
-                          border: "1px solid var(--th-border)",
-                          marginLeft: i > 0 ? -8 : 0,
-                        }}
-                      >
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none">{shape}</svg>
-                      </div>
-                    ))}
-                    {spotCount > 5 && (
-                      <div
-                        className="w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-semibold"
-                        style={{
-                          backgroundColor: "var(--th-surface)",
-                          border: "1px solid var(--th-border)",
-                          color: "var(--th-text-secondary)",
-                          marginLeft: -8,
-                        }}
-                      >
-                        +{spotCount - 5}
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-[13px]" style={{ color: "var(--th-text-muted)" }}>
-                    {spotCount} designer{spotCount !== 1 ? "s" : ""} joined
-                  </span>
-                </div>
-              )}
             </div>
           )}
+          {/* Easter egg */}
+          <button
+            onClick={() => setShowInfo(true)}
+            className="absolute top-4 right-4 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer transition-opacity duration-300"
+            style={{
+              backgroundColor: "transparent",
+              border: `1px solid ${isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)"}`,
+              color: "var(--th-text-muted)",
+              fontSize: 11,
+              animation: "hint-pulse 6s ease-in-out infinite",
+            }}
+            title="What is this?"
+          >
+            ?
+          </button>
         </div>
       </div>
+
+      {/* Curtain modal */}
+      {showInfo && (
+        <div
+          className="fixed inset-0 z-50 overflow-y-auto"
+          onClick={() => setShowInfo(false)}
+        >
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0"
+            style={{
+              backgroundColor: "var(--th-overlay)",
+              animation: "fade-in 0.3s ease-out",
+            }}
+          />
+          {/* Curtain panel */}
+          <div
+            className="relative w-full max-w-[680px] mx-auto px-5"
+            style={{
+              animation: "curtain-drop 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="rounded-b-3xl p-8 sm:p-14"
+              style={{
+                background: "var(--th-glass-bg), var(--th-bg)",
+                backdropFilter: "blur(28px)",
+                borderLeft: "1px solid var(--th-border)",
+                borderRight: "1px solid var(--th-border)",
+                borderBottom: "1px solid var(--th-border)",
+              }}
+            >
+              {/* Close */}
+              <button
+                onClick={() => setShowInfo(false)}
+                className="absolute top-5 right-5 w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer"
+                style={{
+                  backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.04)",
+                  border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--th-text-secondary)" strokeWidth="2" strokeLinecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+
+              <p
+                className="text-[13px] uppercase tracking-[0.15em] font-medium"
+                style={{ color: "var(--th-text-muted)", marginBottom: 24 }}
+              >
+                What's inside
+              </p>
+              <div className="flex items-center gap-4" style={{ marginBottom: 20 }}>
+                <svg width="48" height="48" viewBox="0 0 512 512" fill="none">
+                  <defs>
+                    <linearGradient id="mpt" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#818cf8"/>
+                      <stop offset="100%" stopColor="#6366f1"/>
+                    </linearGradient>
+                    <linearGradient id="mpm" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#6366f1"/>
+                      <stop offset="100%" stopColor="#4f46e5"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M96 340 L256 420 L416 340 L256 260Z" fill="#312e81" opacity="0.7"/>
+                  <path d="M96 280 L256 360 L416 280 L256 200Z" fill="url(#mpm)" opacity="0.75"/>
+                  <path d="M96 220 L256 300 L416 220 L256 140Z" fill="url(#mpt)"/>
+                  <path d="M96 220 L256 300 L256 140Z" fill="white" opacity="0.08"/>
+                </svg>
+                <h2
+                  className="text-[28px] sm:text-[34px] font-semibold tracking-[-0.02em] leading-[1.15]"
+                  style={{ color: "var(--th-text)" }}
+                >
+                  debrieft
+                </h2>
+              </div>
+              <p
+                className="text-[15px] leading-relaxed"
+                style={{ color: "var(--th-text-secondary)", marginBottom: 32 }}
+              >
+                Turn client intake into structured briefs, AI-powered quotes, and ready-to-sign contracts. No more back-and-forth.
+              </p>
+
+              <div
+                className="grid grid-cols-1 sm:grid-cols-2"
+                style={{
+                  borderTop: "1px solid var(--th-border)",
+                  paddingTop: 24,
+                  gap: 16,
+                }}
+              >
+                {[
+                  { icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2", title: "Client intake forms", desc: "Branded questionnaires your clients fill out. You set the questions, they provide the answers." },
+                  { icon: "M13 10V3L4 14h7v7l9-11h-7z", title: "AI-generated briefs", desc: "Raw client responses are automatically turned into structured, actionable design briefs." },
+                  { icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z", title: "Instant quotes", desc: "Set your hourly rates once. The AI scopes the work and generates a quote automatically." },
+                  { icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z", title: "Contract generation", desc: "One click from quote to contract. Ready to send, ready to sign." },
+                ].map((item) => (
+                  <div key={item.title} style={{ padding: 16 }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 12, opacity: 0.55 }}>
+                      <path d={item.icon} />
+                    </svg>
+                    <p className="text-[14px] font-semibold" style={{ color: "var(--th-text)", marginBottom: 4 }}>{item.title}</p>
+                    <p className="text-[13px] leading-relaxed" style={{ color: "var(--th-text-secondary)" }}>{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
