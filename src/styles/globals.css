@@ -162,6 +162,15 @@ body {
 @keyframes float-1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, 20px); } }
 @keyframes float-2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-20px, -30px); } }
 @keyframes float-3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(15px, -15px); } }
+/* Animated gradient border for card */
+.card-glow-border {
+  position: relative;
+  padding: 1px;
+  background: conic-gradient(from var(--glow-angle, 0deg), var(--th-border) 0%, var(--th-border) 80%, rgba(255,255,255,0.5) 88%, rgba(255,255,255,0.8) 92%, rgba(255,255,255,0.5) 96%, var(--th-border) 100%);
+}
+.card-glow-border > .card-inner {
+  position: relative;
+}
 
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
