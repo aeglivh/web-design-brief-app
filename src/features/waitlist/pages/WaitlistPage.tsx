@@ -222,7 +222,7 @@ export default function WaitlistPage() {
 
         {/* Divider */}
         <div
-          className="h-px w-full mb-10"
+          className="h-px w-full my-10"
           style={{ backgroundColor: isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)" }}
         />
 
@@ -265,14 +265,14 @@ export default function WaitlistPage() {
         ) : (
           <div>
             {error && <Alert variant="error" className="mb-4">{error}</Alert>}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex gap-3">
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="flex gap-4">
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Name"
-                  className="h-11 rounded-xl px-4 text-[14px] outline-none transition-all duration-200 w-[130px] flex-shrink-0"
+                  className="h-12 rounded-xl px-4 text-[14px] outline-none transition-all duration-200 w-[140px] flex-shrink-0"
                   style={{
                     backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
                     border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
@@ -285,7 +285,7 @@ export default function WaitlistPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@studio.com"
-                  className="h-11 rounded-xl px-4 text-[14px] outline-none transition-all duration-200 flex-1 min-w-0"
+                  className="h-12 rounded-xl px-4 text-[14px] outline-none transition-all duration-200 flex-1 min-w-0"
                   style={{
                     backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
                     border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
@@ -296,7 +296,7 @@ export default function WaitlistPage() {
               <button
                 type="submit"
                 disabled={loading || !email}
-                className="w-full h-11 rounded-xl text-[14px] font-semibold transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                className="w-full h-12 rounded-xl text-[14px] font-semibold transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
                 style={{
                   background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
                   color: "white",
@@ -309,7 +309,7 @@ export default function WaitlistPage() {
             </form>
 
             {/* Social proof + incentive */}
-            <div className="flex items-center justify-center gap-3 mt-6">
+            <div className="flex items-center justify-center gap-3 mt-8">
               {spotCount !== null && spotCount > 0 && (
                 <>
                   {/* Avatar stack */}
