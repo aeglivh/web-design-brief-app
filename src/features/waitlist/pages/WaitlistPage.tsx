@@ -153,11 +153,11 @@ export default function WaitlistPage() {
         style={{ animation: "enter 0.6s ease-out" }}
       >
         <div
-          className="card-inner rounded-3xl p-6 sm:p-16"
+          className="card-inner rounded-3xl p-8 sm:p-16"
           style={{ background: "var(--th-glass-bg), var(--th-bg)", backdropFilter: "blur(28px)" }}
         >
           {/* Logo */}
-          <div className="flex justify-center" style={{ marginBottom: 16 }}>
+          <div className="flex justify-center" style={{ marginBottom: 20 }}>
             <div className="flex items-center justify-center">
               <svg className="w-[50px] h-[50px] sm:w-[80px] sm:h-[80px]" viewBox="0 0 512 512" fill="none">
                 <defs>
@@ -180,8 +180,8 @@ export default function WaitlistPage() {
 
           {/* Heading */}
           <h1
-            className="text-center text-[36px] sm:text-[72px] font-semibold tracking-[-0.03em] leading-[1.05]"
-            style={{ color: "var(--th-text)", marginBottom: 12 }}
+            className="text-center text-[40px] sm:text-[72px] font-semibold tracking-[-0.03em] leading-[1.05]"
+            style={{ color: "var(--th-text)", marginBottom: 16 }}
           >
             Join the waitlist
           </h1>
@@ -196,7 +196,7 @@ export default function WaitlistPage() {
           {/* Subtitle line 2 */}
           <p
             className="text-center text-[15px] sm:text-[16px] leading-relaxed"
-            style={{ color: "var(--th-text-secondary)", marginBottom: 12 }}
+            style={{ color: "var(--th-text-secondary)", marginBottom: 16 }}
           >
             All in one platform for web designers.
           </p>
@@ -204,7 +204,7 @@ export default function WaitlistPage() {
           {/* Incentive */}
           <p
             className="text-center text-[14px] sm:text-[15px] font-medium"
-            style={{ color: isDark ? "#a5b4fc" : "#6366f1", marginBottom: 20 }}
+            style={{ color: isDark ? "#a5b4fc" : "#6366f1", marginBottom: 24 }}
           >
             Early birds get 6 months free access
           </p>
@@ -218,7 +218,7 @@ export default function WaitlistPage() {
               >
                 You have
               </p>
-              <div className="flex items-center justify-center gap-1" style={{ marginBottom: 24 }}>
+              <div className="flex items-center justify-center gap-1" style={{ marginBottom: 28 }}>
                 {[
                   { value: countdown.days, label: "days" },
                   { value: countdown.hours, label: "hrs" },
@@ -302,13 +302,13 @@ export default function WaitlistPage() {
             <div>
               {error && <Alert variant="error" className="mb-4">{error}</Alert>}
               <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Name"
-                    className="h-12 rounded-xl px-4 text-[14px] outline-none transition-all duration-200 w-[140px] flex-shrink-0"
+                    className="h-12 rounded-xl px-4 text-[14px] outline-none transition-all duration-200 w-full sm:w-[140px] sm:flex-shrink-0"
                     style={{
                       backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
                       border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
@@ -321,7 +321,7 @@ export default function WaitlistPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@studio.com"
-                    className="h-12 rounded-xl px-4 text-[14px] outline-none transition-all duration-200 flex-1 min-w-0"
+                    className="h-12 rounded-xl px-4 text-[14px] outline-none transition-all duration-200 w-full sm:flex-1 sm:min-w-0"
                     style={{
                       backgroundColor: isDark ? "rgba(255,255,255,0.04)" : "rgba(0,0,0,0.03)",
                       border: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)"}`,
