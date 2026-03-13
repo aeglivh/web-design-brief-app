@@ -100,7 +100,7 @@ export default function WaitlistPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center px-5 py-12 relative overflow-hidden"
+      className="min-h-screen flex flex-col items-center justify-center px-3 sm:px-5 py-4 sm:py-12 relative overflow-hidden"
       style={{ backgroundColor: "var(--th-bg)" }}
     >
       {/* Background glow orbs */}
@@ -153,13 +153,13 @@ export default function WaitlistPage() {
         style={{ animation: "enter 0.6s ease-out" }}
       >
         <div
-          className="card-inner rounded-3xl p-10 sm:p-16"
+          className="card-inner rounded-3xl p-6 sm:p-16"
           style={{ background: "var(--th-glass-bg), var(--th-bg)", backdropFilter: "blur(28px)" }}
         >
           {/* Logo */}
-          <div className="flex justify-center" style={{ marginBottom: 32 }}>
+          <div className="flex justify-center" style={{ marginBottom: 16 }}>
             <div className="flex items-center justify-center">
-              <svg width="80" height="80" viewBox="0 0 512 512" fill="none">
+              <svg className="w-[50px] h-[50px] sm:w-[80px] sm:h-[80px]" viewBox="0 0 512 512" fill="none">
                 <defs>
                   <linearGradient id="pt" x1="0" y1="0" x2="1" y2="1">
                     <stop offset="0%" stopColor="#818cf8"/>
@@ -180,8 +180,8 @@ export default function WaitlistPage() {
 
           {/* Heading */}
           <h1
-            className="text-center text-[52px] sm:text-[72px] font-semibold tracking-[-0.03em] leading-[1.05]"
-            style={{ color: "var(--th-text)", marginBottom: 24 }}
+            className="text-center text-[36px] sm:text-[72px] font-semibold tracking-[-0.03em] leading-[1.05]"
+            style={{ color: "var(--th-text)", marginBottom: 12 }}
           >
             Join the waitlist
           </h1>
@@ -196,7 +196,7 @@ export default function WaitlistPage() {
           {/* Subtitle line 2 */}
           <p
             className="text-center text-[15px] sm:text-[16px] leading-relaxed"
-            style={{ color: "var(--th-text-secondary)", marginBottom: 24 }}
+            style={{ color: "var(--th-text-secondary)", marginBottom: 12 }}
           >
             All in one platform for web designers.
           </p>
@@ -204,7 +204,7 @@ export default function WaitlistPage() {
           {/* Incentive */}
           <p
             className="text-center text-[14px] sm:text-[15px] font-medium"
-            style={{ color: isDark ? "#a5b4fc" : "#6366f1", marginBottom: 40 }}
+            style={{ color: isDark ? "#a5b4fc" : "#6366f1", marginBottom: 20 }}
           >
             Early birds get 6 months free access
           </p>
@@ -214,11 +214,11 @@ export default function WaitlistPage() {
             <>
               <p
                 className="text-center text-[13px] uppercase tracking-[0.15em]"
-                style={{ color: "var(--th-text-muted)", marginBottom: 16 }}
+                style={{ color: "var(--th-text-muted)", marginBottom: 8 }}
               >
                 You have
               </p>
-              <div className="flex items-center justify-center gap-1" style={{ marginBottom: 48 }}>
+              <div className="flex items-center justify-center gap-1" style={{ marginBottom: 24 }}>
                 {[
                   { value: countdown.days, label: "days" },
                   { value: countdown.hours, label: "hrs" },
@@ -301,8 +301,8 @@ export default function WaitlistPage() {
           ) : (
             <div>
               {error && <Alert variant="error" className="mb-4">{error}</Alert>}
-              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                <div className="flex gap-4">
+              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div className="flex gap-3">
                   <input
                     type="text"
                     value={name}
@@ -386,7 +386,7 @@ export default function WaitlistPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <div
-              className="rounded-b-3xl p-8 sm:p-14"
+              className="rounded-b-3xl p-5 sm:p-14"
               style={{
                 background: "var(--th-glass-bg), var(--th-bg)",
                 backdropFilter: "blur(28px)",
@@ -411,11 +411,11 @@ export default function WaitlistPage() {
 
               <p
                 className="text-[13px] uppercase tracking-[0.15em] font-medium"
-                style={{ color: "var(--th-text-muted)", marginBottom: 24 }}
+                style={{ color: "var(--th-text-muted)", marginBottom: 16 }}
               >
                 What's inside
               </p>
-              <div className="flex items-center gap-4" style={{ marginBottom: 20 }}>
+              <div className="flex items-center gap-4" style={{ marginBottom: 12 }}>
                 <svg width="48" height="48" viewBox="0 0 512 512" fill="none">
                   <defs>
                     <linearGradient id="mpt" x1="0" y1="0" x2="1" y2="1">
@@ -440,8 +440,8 @@ export default function WaitlistPage() {
                 </h2>
               </div>
               <p
-                className="text-[15px] leading-relaxed"
-                style={{ color: "var(--th-text-secondary)", marginBottom: 32 }}
+                className="text-[14px] sm:text-[15px] leading-relaxed"
+                style={{ color: "var(--th-text-secondary)", marginBottom: 20 }}
               >
                 Turn client intake into structured briefs, AI-powered quotes, and ready-to-sign contracts. No more back-and-forth.
               </p>
@@ -450,8 +450,8 @@ export default function WaitlistPage() {
                 className="grid grid-cols-1 sm:grid-cols-2"
                 style={{
                   borderTop: "1px solid var(--th-border)",
-                  paddingTop: 24,
-                  gap: 16,
+                  paddingTop: 16,
+                  gap: 8,
                 }}
               >
                 {[
@@ -460,8 +460,8 @@ export default function WaitlistPage() {
                   { icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z", title: "Instant quotes", desc: "Set your hourly rates once. The AI scopes the work and generates a quote automatically." },
                   { icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z", title: "Contract generation", desc: "One click from quote to contract. Ready to send, ready to sign." },
                 ].map((item) => (
-                  <div key={item.title} style={{ padding: 16 }}>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 12, opacity: 0.55 }}>
+                  <div key={item.title} style={{ padding: 12 }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: 8, opacity: 0.55 }}>
                       <path d={item.icon} />
                     </svg>
                     <p className="text-[14px] font-semibold" style={{ color: "var(--th-text)", marginBottom: 4 }}>{item.title}</p>
