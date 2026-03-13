@@ -48,7 +48,7 @@ export function Step06_Responsibilities({ form, accent }: StepProps) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <div>
         <h2 className="text-lg font-semibold text-th-text">
           Responsibilities & Access

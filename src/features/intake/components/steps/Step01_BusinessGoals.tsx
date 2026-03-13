@@ -18,7 +18,7 @@ export function Step01_BusinessGoals({ form }: StepProps) {
   } = form;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <div>
         <h2 className="text-lg font-semibold text-th-text">
           Tell us about your business
@@ -28,7 +28,7 @@ export function Step01_BusinessGoals({ form }: StepProps) {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
           label="Business Name"
           register={register("businessName")}
@@ -45,7 +45,7 @@ export function Step01_BusinessGoals({ form }: StepProps) {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
           label="Contact Name"
           register={register("contactName")}
@@ -60,7 +60,7 @@ export function Step01_BusinessGoals({ form }: StepProps) {
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Input
           label="Contact Phone"
           type="tel"
@@ -91,7 +91,7 @@ export function Step01_BusinessGoals({ form }: StepProps) {
         register={register("targetAudience")}
         error={errors.targetAudience?.message}
         placeholder="Describe your ideal customer..."
-        rows={3}
+        rows={2}
       />
 
       <Controller
@@ -120,7 +120,7 @@ export function Step01_BusinessGoals({ form }: StepProps) {
               error={errors.competitors?.message}
               placeholder="List competitor websites (one per line)"
               hint="Optionally add notes with — separator, e.g. https://example.com — clean design"
-              rows={4}
+              rows={2}
             />
           );
         }}

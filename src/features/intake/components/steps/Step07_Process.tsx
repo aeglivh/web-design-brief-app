@@ -31,7 +31,7 @@ export function Step07_Process({ form, accent }: StepProps) {
   const { register, control } = form;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <div>
         <h2 className="text-lg font-semibold text-th-text">
           Process & Expectations

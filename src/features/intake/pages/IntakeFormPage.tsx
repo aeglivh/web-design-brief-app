@@ -199,7 +199,7 @@ export default function IntakeFormPage() {
 
         {/* Form body — scrollable */}
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col min-h-0 flex-1">
-          <div className="px-10 py-8 overflow-y-auto flex-1">
+          <div className="px-10 py-5 overflow-y-auto flex-1">
             {getStepComponent()}
           </div>
 

@@ -16,10 +16,10 @@ export function FormLayout({
   return (
     <div className="h-screen flex items-center justify-center px-5 py-6 overflow-hidden" style={style}>
       <div
-        className="w-full rounded-[24px] flex flex-col"
+        className="w-full rounded-[24px] flex flex-col overflow-hidden"
         style={{
           maxWidth,
-          maxHeight: "calc(100vh - 48px)",
+          height: "calc(100vh - 48px)",
           background: "linear-gradient(135deg, var(--th-surface-hover) 0%, var(--th-surface) 100%)",
           backdropFilter: "blur(28px)",
           WebkitBackdropFilter: "blur(28px)",

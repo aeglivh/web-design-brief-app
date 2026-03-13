@@ -26,7 +26,7 @@ export function Step08_Budget({ form, accent }: StepProps) {
   const budgetRange = watch("budgetRange") ?? "";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <div>
         <h2 className="text-lg font-semibold text-th-text">
           Budget & Final Details
