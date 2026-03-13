@@ -14,11 +14,12 @@ export function FormLayout({
   const style: CSSProperties = bgColor ? { backgroundColor: bgColor } : { backgroundColor: "var(--th-bg)" };
 
   return (
-    <div className="min-h-screen flex items-start justify-center py-12 px-5" style={style}>
+    <div className="h-screen flex items-center justify-center px-5 py-6 overflow-hidden" style={style}>
       <div
-        className="w-full rounded-[24px]"
+        className="w-full rounded-[24px] flex flex-col"
         style={{
           maxWidth,
+          maxHeight: "calc(100vh - 48px)",
           background: "linear-gradient(135deg, var(--th-surface-hover) 0%, var(--th-surface) 100%)",
           backdropFilter: "blur(28px)",
           WebkitBackdropFilter: "blur(28px)",

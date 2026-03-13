@@ -166,9 +166,9 @@ export default function IntakeFormPage() {
 
   return (
     <FormLayout bgColor={bgColor} maxWidth="860px">
-      <div style={{ fontFamily: `'${bodyFont}', sans-serif` }}>
-        {/* Header */}
-        <div className="px-10 pt-8 pb-5">
+      <div className="flex flex-col h-full" style={{ fontFamily: `'${bodyFont}', sans-serif` }}>
+        {/* Header — fixed */}
+        <div className="px-10 pt-8 pb-5 shrink-0">
           <div className="flex items-center gap-3 mb-6">
             {designer?.logo_url && (
               <img
@@ -197,16 +197,14 @@ export default function IntakeFormPage() {
           />
         </div>
 
-        {/* Form body */}
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div
-            className="px-10 py-8 min-h-[400px]"
-          >
+        {/* Form body — scrollable */}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col min-h-0 flex-1">
+          <div className="px-10 py-8 overflow-y-auto flex-1">
             {getStepComponent()}
           </div>
 
-          {/* Navigation */}
-          <div className="px-10 py-5 border-t border-th-border-light flex items-center justify-between">
+          {/* Navigation — fixed */}
+          <div className="px-10 py-5 border-t border-th-border-light flex items-center justify-between shrink-0">
             <div>
               {step > 0 && (
                 <Button type="button" variant="ghost" onClick={prevStep}>
