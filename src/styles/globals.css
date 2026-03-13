@@ -1,0 +1,171 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=JetBrains+Mono:wght@100;400&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #3b82f6;
+  --color-error: #FF453A;
+  --color-success: #32D74B;
+  --color-warning: #FF9F0A;
+  --font-heading: "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Theme-aware colors — switch automatically with data-theme */
+  --color-th-bg: var(--th-bg);
+  --color-th-surface: var(--th-surface);
+  --color-th-surface-hover: var(--th-surface-hover);
+  --color-th-text: var(--th-text);
+  --color-th-secondary: var(--th-text-secondary);
+  --color-th-muted: var(--th-text-muted);
+  --color-th-border: var(--th-border);
+  --color-th-border-light: var(--th-border-light);
+  --color-th-input: var(--th-input-bg);
+  --color-th-icon: var(--th-icon);
+  --color-th-placeholder: var(--th-placeholder);
+}
+
+/* ─── Dark theme (default) ─── */
+:root,
+[data-theme="dark"] {
+  --th-bg: #08080c;
+  --th-surface: rgba(255,255,255,0.03);
+  --th-surface-hover: rgba(255,255,255,0.06);
+  --th-glass-bg: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+  --th-glass-highlight: radial-gradient(circle at 20% 0%, rgba(99,102,241,0.06) 0%, transparent 50%);
+  --th-glass-shadow: 0 24px 48px -12px rgba(0,0,0,0.5), inset 0 1px 1px 0 rgba(255,255,255,0.05);
+  --th-overlay: rgba(0,0,0,0.6);
+  --th-text: rgba(255,255,255,0.92);
+  --th-text-secondary: rgba(255,255,255,0.55);
+  --th-text-muted: rgba(255,255,255,0.32);
+  --th-border: rgba(255,255,255,0.09);
+  --th-border-light: rgba(255,255,255,0.05);
+  --th-input-bg: rgba(255,255,255,0.04);
+  --th-placeholder: rgba(255,255,255,0.25);
+  --th-icon: white;
+  --th-logo-bg: rgba(99,102,241,0.15);
+  --th-accent: #6366f1;
+  --th-accent-muted: rgba(99,102,241,0.15);
+  --th-scrollbar: rgba(255,255,255,0.08);
+  --th-scrollbar-hover: rgba(255,255,255,0.15);
+  --th-selection-bg: rgba(99,102,241,0.25);
+  --th-selection-text: white;
+  color-scheme: dark;
+}
+
+/* ─── Light theme ─── */
+[data-theme="light"] {
+  --th-bg: #f4f4f8;
+  --th-surface: rgba(255,255,255,0.7);
+  --th-surface-hover: rgba(255,255,255,0.9);
+  --th-glass-bg: linear-gradient(135deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.72) 100%);
+  --th-glass-highlight: radial-gradient(circle at 20% 0%, rgba(99,102,241,0.04) 0%, transparent 50%);
+  --th-glass-shadow: 0 24px 48px -12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8);
+  --th-overlay: rgba(0,0,0,0.3);
+  --th-text: rgba(0,0,0,0.88);
+  --th-text-secondary: rgba(0,0,0,0.55);
+  --th-text-muted: rgba(0,0,0,0.35);
+  --th-border: rgba(0,0,0,0.1);
+  --th-border-light: rgba(0,0,0,0.05);
+  --th-input-bg: rgba(255,255,255,0.6);
+  --th-placeholder: rgba(0,0,0,0.3);
+  --th-icon: #2d2d3a;
+  --th-logo-bg: rgba(99,102,241,0.1);
+  --th-accent: #6366f1;
+  --th-accent-muted: rgba(99,102,241,0.08);
+  --th-scrollbar: rgba(0,0,0,0.1);
+  --th-scrollbar-hover: rgba(0,0,0,0.2);
+  --th-selection-bg: rgba(99,102,241,0.2);
+  --th-selection-text: inherit;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
+
+html {
+  font-size: 16px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--th-text);
+  background: var(--th-bg);
+  line-height: 1.5;
+}
+
+/* Glass utility */
+.glass {
+  background: var(--th-glass-bg);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid var(--th-border);
+  box-shadow: var(--th-glass-shadow);
+  position: relative;
+}
+
+.glass::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--th-glass-highlight);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+@media print {
+  html, body {
+    background: white !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  .no-print { display: none !important; }
+
+  /* Brief full-page view — remove fixed positioning and overflow constraints */
+  .brief-full-page {
+    position: static !important;
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+    inset: auto !important;
+    z-index: auto !important;
+    background: white !important;
+  }
+
+  /* Contract modal — flatten for print */
+  .print-flatten {
+    position: static !important;
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+    max-width: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: white !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 0 !important;
+  }
+  .print-flatten > * {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scale-in { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: scale(1); } }
+@keyframes float-1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, 20px); } }
+@keyframes float-2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-20px, -30px); } }
+@keyframes float-3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(15px, -15px); } }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--th-scrollbar); border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: var(--th-scrollbar-hover); }
+
+::selection { background: var(--th-selection-bg); color: var(--th-selection-text); }

@@ -8,7 +8,8 @@
     "api/send-email.js": { "maxDuration": 10 },
     "api/designer.js": { "maxDuration": 10 },
     "api/rates.js": { "maxDuration": 10 },
-    "api/briefs.js": { "maxDuration": 10 }
+    "api/briefs.js": { "maxDuration": 10 },
+    "api/contract.js": { "maxDuration": 60 }
   },
   "rewrites": [
     { "source": "/((?!api/).*)", "destination": "/index.html" }

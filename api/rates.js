@@ -39,6 +39,7 @@ module.exports = async (req, res) => {
         hourly_rate:  parsed.hourly_rate,
         multipliers:  parsed.multipliers,
         currency:     parsed.currency,
+        vat_rate:     parsed.vat_rate,
         updated_at:   new Date().toISOString(),
       }, { onConflict: 'designer_id' })
       .select()
