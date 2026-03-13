@@ -8,6 +8,7 @@ interface ContractDocumentProps {
   businessName: string;
   currency: string;
   accent: string;
+  fontSize?: number;
 }
 
 function EditableText({
@@ -40,11 +41,11 @@ function EditableText({
         ...style,
       }}
       onFocus={(e) => {
-        (e.target as HTMLElement).style.background = "rgba(99,102,241,0.06)";
+        (e.target as HTMLElement).style.background = "rgba(99,102,241,0.10)";
       }}
       onMouseOver={(e) => {
         if (document.activeElement !== e.target)
-          (e.target as HTMLElement).style.background = "rgba(99,102,241,0.03)";
+          (e.target as HTMLElement).style.background = "rgba(99,102,241,0.05)";
       }}
       onMouseOut={(e) => {
         if (document.activeElement !== e.target)
@@ -66,6 +67,7 @@ export function ContractDocument({
   businessName,
   currency,
   accent,
+  fontSize = 14,
 }: ContractDocumentProps) {
   const today = new Date().toLocaleDateString("en-GB", {
     day: "numeric",
@@ -82,8 +84,8 @@ export function ContractDocument({
 
   return (
     <div
-      className="max-w-3xl mx-auto text-[14px] leading-[1.7] print:text-[11pt] print:leading-normal print:max-w-none"
-      style={{ color: "#1e293b", fontFamily: "Inter, system-ui, sans-serif" }}
+      className="max-w-3xl mx-auto leading-[1.7] print:text-[11pt] print:leading-normal print:max-w-none"
+      style={{ color: "#1e293b", fontFamily: "Inter, system-ui, sans-serif", fontSize }}
     >
       {/* ── Header ─────────────────────────────────────────────── */}
       <div className="text-center" style={{ marginBottom: 40 }}>
@@ -93,7 +95,7 @@ export function ContractDocument({
         />
         <h1
           className="font-bold tracking-tight print:text-xl"
-          style={{ fontSize: 22, color: "#0f172a", marginBottom: 8 }}
+          style={{ fontSize: fontSize + 8, color: "#0f172a", marginBottom: 8 }}
         >
           Scope of Work &amp; Project Agreement
         </h1>
@@ -118,7 +120,7 @@ export function ContractDocument({
       </p>
 
       {/* ── 1. Scope of Work ───────────────────────────────────── */}
-      <Section n={1} title="Scope of Work" accent={accent}>
+      <Section n={1} title="Scope of Work" accent={accent} fontSize={fontSize}>
         <EditableText
           value={data.scopeOfWork}
           onChange={(v) => updateField("scopeOfWork", v)}
@@ -128,7 +130,7 @@ export function ContractDocument({
       </Section>
 
       {/* ── 2. Deliverables ────────────────────────────────────── */}
-      <Section n={2} title="Deliverables" accent={accent}>
+      <Section n={2} title="Deliverables" accent={accent} fontSize={fontSize}>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {data.deliverables.map((d, i) => (
             <div key={i} style={{ display: "flex", gap: 8 }}>
@@ -166,7 +168,7 @@ export function ContractDocument({
       </Section>
 
       {/* ── 3. Exclusions ──────────────────────────────────────── */}
-      <Section n={3} title="Exclusions" accent={accent}>
+      <Section n={3} title="Exclusions" accent={accent} fontSize={fontSize}>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {data.exclusions.map((ex, i) => (
             <div key={i} style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
@@ -187,7 +189,7 @@ export function ContractDocument({
       </Section>
 
       {/* ── 4. Revision Policy ─────────────────────────────────── */}
-      <Section n={4} title="Revision Policy" accent={accent}>
+      <Section n={4} title="Revision Policy" accent={accent} fontSize={fontSize}>
         <p style={{ color: "#334155", marginBottom: 8 }}>
           Design revisions: <strong style={{ color: "#0f172a" }}>{data.revisionPolicy.designRevisions} rounds</strong>.
           Development revisions:{" "}
@@ -210,7 +212,7 @@ export function ContractDocument({
       </Section>
 
       {/* ── 5. Project Timeline ────────────────────────────────── */}
-      <Section n={5} title="Project Timeline" accent={accent}>
+      <Section n={5} title="Project Timeline" accent={accent} fontSize={fontSize}>
         <p style={{ color: "#64748b", marginBottom: 16 }}>
           Estimated total duration:{" "}
           <strong style={{ color: "#0f172a" }}>{data.timeline.totalWeeks} weeks</strong>
@@ -218,9 +220,9 @@ export function ContractDocument({
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "2px solid #e2e8f0" }}>
-              <th style={{ padding: "10px 16px 10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>Phase</th>
-              <th style={{ padding: "10px 16px 10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>Duration</th>
-              <th style={{ padding: "10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>Deliverable</th>
+              <th style={{ padding: "10px 16px 10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: fontSize - 1 }}>Phase</th>
+              <th style={{ padding: "10px 16px 10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: fontSize - 1 }}>Duration</th>
+              <th style={{ padding: "10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: fontSize - 1 }}>Deliverable</th>
             </tr>
           </thead>
           <tbody>
@@ -266,13 +268,13 @@ export function ContractDocument({
       </Section>
 
       {/* ── 6. Payment Schedule ────────────────────────────────── */}
-      <Section n={6} title="Payment Schedule" accent={accent}>
+      <Section n={6} title="Payment Schedule" accent={accent} fontSize={fontSize}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "2px solid #e2e8f0" }}>
-              <th style={{ padding: "10px 16px 10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>Milestone</th>
-              <th style={{ padding: "10px 16px 10px 0", textAlign: "right", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>%</th>
-              <th style={{ padding: "10px 0", textAlign: "right", fontWeight: 600, color: "#0f172a", fontSize: 13 }}>Amount</th>
+              <th style={{ padding: "10px 16px 10px 0", textAlign: "left", fontWeight: 600, color: "#0f172a", fontSize: fontSize - 1 }}>Milestone</th>
+              <th style={{ padding: "10px 16px 10px 0", textAlign: "right", fontWeight: 600, color: "#0f172a", fontSize: fontSize - 1 }}>%</th>
+              <th style={{ padding: "10px 0", textAlign: "right", fontWeight: 600, color: "#0f172a", fontSize: fontSize - 1 }}>Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -300,7 +302,7 @@ export function ContractDocument({
       </Section>
 
       {/* ── 7. Change Requests ─────────────────────────────────── */}
-      <Section n={7} title="Change Requests" accent={accent}>
+      <Section n={7} title="Change Requests" accent={accent} fontSize={fontSize}>
         <EditableText
           value={data.changeRequestProcess}
           onChange={(v) => updateField("changeRequestProcess", v)}
@@ -310,7 +312,7 @@ export function ContractDocument({
       </Section>
 
       {/* ── 8. Intellectual Property ───────────────────────────── */}
-      <Section n={8} title="Intellectual Property" accent={accent}>
+      <Section n={8} title="Intellectual Property" accent={accent} fontSize={fontSize}>
         <EditableText
           value={data.ipTransfer}
           onChange={(v) => updateField("ipTransfer", v)}
@@ -320,7 +322,7 @@ export function ContractDocument({
       </Section>
 
       {/* ── 9. Cancellation ────────────────────────────────────── */}
-      <Section n={9} title="Cancellation" accent={accent}>
+      <Section n={9} title="Cancellation" accent={accent} fontSize={fontSize}>
         <EditableText
           value={data.cancellationTerms}
           onChange={(v) => updateField("cancellationTerms", v)}
@@ -330,7 +332,7 @@ export function ContractDocument({
       </Section>
 
       {/* ── 10. Warranty ───────────────────────────────────────── */}
-      <Section n={10} title="Warranty" accent={accent}>
+      <Section n={10} title="Warranty" accent={accent} fontSize={fontSize}>
         <EditableText
           value={data.warranty}
           onChange={(v) => updateField("warranty", v)}
@@ -362,11 +364,13 @@ function Section({
   n,
   title,
   accent,
+  fontSize,
   children,
 }: {
   n: number;
   title: string;
   accent: string;
+  fontSize?: number;
   children: React.ReactNode;
 }) {
   return (
@@ -376,7 +380,7 @@ function Section({
           display: "flex",
           alignItems: "center",
           gap: 10,
-          fontSize: 15,
+          fontSize: (fontSize || 14) + 1,
           fontWeight: 600,
           color: "#0f172a",
           marginBottom: 14,

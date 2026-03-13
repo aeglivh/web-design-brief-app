@@ -3,6 +3,8 @@ import { Modal } from "@/components/ui";
 import { ContractDocument } from "./ContractDocument";
 import type { ContractData } from "@/lib/types";
 
+const FONT_SIZES = [12, 13, 14, 15, 16] as const;
+
 interface ContractModalProps {
   contractId: string;
   data: ContractData;
@@ -30,6 +32,7 @@ export function ContractModal({
 }: ContractModalProps) {
   const [data, setData] = useState<ContractData>(initialData);
   const [dirty, setDirty] = useState(false);
+  const [fontSize, setFontSize] = useState<number>(14);
   const dataRef = useRef(data);
 
   const handleChange = useCallback((updated: ContractData) => {
@@ -76,6 +79,26 @@ export function ContractModal({
           {!dirty && (
             <span className="text-[11px] text-th-muted/50">Saved</span>
           )}
+          <div className="w-px h-4 bg-th-border mx-0.5" />
+          <div className="flex items-center gap-0.5">
+            <button
+              onClick={() => setFontSize((s) => Math.max(FONT_SIZES[0], s - 1))}
+              disabled={fontSize <= FONT_SIZES[0]}
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-th-muted hover:text-th-secondary hover:bg-th-surface-hover transition-all cursor-pointer disabled:opacity-30 disabled:cursor-default"
+              title="Decrease font size"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="12" x2="19" y2="12" /></svg>
+            </button>
+            <span className="text-[11px] text-th-muted tabular-nums w-8 text-center">{fontSize}px</span>
+            <button
+              onClick={() => setFontSize((s) => Math.min(FONT_SIZES[FONT_SIZES.length - 1], s + 1))}
+              disabled={fontSize >= FONT_SIZES[FONT_SIZES.length - 1]}
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-th-muted hover:text-th-secondary hover:bg-th-surface-hover transition-all cursor-pointer disabled:opacity-30 disabled:cursor-default"
+              title="Increase font size"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+            </button>
+          </div>
           <div className="w-px h-4 bg-th-border mx-0.5" />
           <a
             href="https://www.docuseal.com/"
@@ -124,6 +147,7 @@ export function ContractModal({
             businessName={businessName}
             currency={currency}
             accent={accent}
+            fontSize={fontSize}
           />
         </div>
       </div>
