@@ -31,7 +31,7 @@ function Root() {
   const session = useAuth();
   if (session === undefined) return <Loading />;
   if (session) return <Navigate to="/dashboard" replace />;
-  return <SplashPage />;
+  return <Navigate to="/login" replace />;
 }
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
