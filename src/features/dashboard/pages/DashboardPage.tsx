@@ -224,6 +224,7 @@ export default function DashboardPage() {
           studioName={designer?.studio_name || ""}
           accent={acc}
           logoUrl={designer?.logo_url}
+          formBgColour={designer?.form_bg_colour}
           onClose={() => setSelectedBrief(null)}
           onQuoteGenerated={handleQuoteGenerated}
         />

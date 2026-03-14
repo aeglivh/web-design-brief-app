@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { usePortalData } from "./usePortalData";
 import { PortalPaused } from "./PortalPaused";
 import { PortalProgress } from "./PortalProgress";
+import { PortalPhases } from "./PortalPhases";
 import { PortalTimeline } from "./PortalTimeline";
 
 export default function PortalPage() {
@@ -84,7 +85,7 @@ export default function PortalPage() {
     >
       <div
         style={{
-          maxWidth: 640,
+          maxWidth: 860,
           margin: "0 auto",
           padding: "40px 20px 60px",
         }}
@@ -142,6 +143,18 @@ export default function PortalPage() {
 
         {/* Progress stepper */}
         <PortalProgress portalStatus={brief.portal_status} accent={accent} />
+
+        {/* Project phases (from contract milestones) */}
+        {(brief.project_phases?.length || data.contract?.contract_data) && (
+          <PortalPhases
+            milestones={
+              ((data.contract?.contract_data as { timeline?: { milestones?: Array<{ phase: string; weeks: string; deliverable: string }> } })?.timeline?.milestones) || []
+            }
+            projectPhases={brief.project_phases}
+            portalStatus={brief.portal_status}
+            accent={accent}
+          />
+        )}
 
         {/* Timeline section */}
         <div

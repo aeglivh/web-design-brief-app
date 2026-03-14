@@ -1,5 +1,16 @@
 import type { PortalUpdate } from "./usePortalData";
 
+function statusPillStyle(label: string): { bg: string; color: string } {
+  const l = label.toLowerCase();
+  if (l === "project complete") return { bg: "rgba(34,197,94,0.15)", color: "#4ade80" };
+  if (l === "launch day") return { bg: "rgba(244,114,182,0.15)", color: "#f472b6" };
+  if (l.includes("draft") || l.includes("design")) return { bg: "rgba(99,102,241,0.15)", color: "#818cf8" };
+  if (l.includes("development") || l.includes("staging")) return { bg: "rgba(168,85,247,0.15)", color: "#c084fc" };
+  if (l.includes("wireframe") || l.includes("started")) return { bg: "rgba(56,189,248,0.15)", color: "#38bdf8" };
+  if (l.includes("review") || l.includes("revision")) return { bg: "rgba(251,191,36,0.15)", color: "#fbbf24" };
+  return { bg: "var(--th-surface-hover)", color: "var(--th-text-secondary)" };
+}
+
 interface PortalTimelineProps {
   updates: PortalUpdate[];
   feedbackUpdateIds: string[];
@@ -69,8 +80,8 @@ export function PortalTimeline({ updates, feedbackUpdateIds, accent }: PortalTim
                       display: "inline-block",
                       padding: "2px 10px",
                       borderRadius: 10,
-                      backgroundColor: "var(--th-surface-hover)",
-                      color: "var(--th-text-secondary)",
+                      backgroundColor: statusPillStyle(update.status_label).bg,
+                      color: statusPillStyle(update.status_label).color,
                     }}
                   >
                     {update.status_label}

@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { isLight } from "@/lib/utils";
 
 const STAGES = [
@@ -34,22 +35,23 @@ export function PortalProgress({ portalStatus, accent }: PortalProgressProps) {
       style={{
         border: "1px solid var(--th-border-light)",
         background: "var(--th-surface)",
-        padding: "16px 20px",
+        padding: "16px 24px",
         marginBottom: 20,
       }}
     >
       {/* Desktop: horizontal */}
-      <div className="hidden sm:flex items-center" style={{ gap: 4 }}>
+      <div className="hidden sm:flex items-center">
         {STAGES.map((stage, i) => {
           const isCompleted = i < activeIndex;
           const isActive = i === activeIndex;
           return (
-            <div key={stage.key} className="flex items-center" style={{ gap: 4 }}>
+            <Fragment key={stage.key}>
               {i > 0 && (
                 <div
                   style={{
-                    width: 20,
+                    flex: 1,
                     height: 1,
+                    minWidth: 12,
                     backgroundColor: i <= activeIndex ? accent : "var(--th-border)",
                   }}
                 />
@@ -57,9 +59,10 @@ export function PortalProgress({ portalStatus, accent }: PortalProgressProps) {
               <div
                 className="flex items-center justify-center text-[11px] font-medium whitespace-nowrap"
                 style={{
-                  height: 28,
+                  height: 30,
                   padding: "0 12px",
-                  borderRadius: 14,
+                  borderRadius: 15,
+                  flexShrink: 0,
                   backgroundColor: isActive
                     ? accent
                     : isCompleted
@@ -70,6 +73,9 @@ export function PortalProgress({ portalStatus, accent }: PortalProgressProps) {
                     : isCompleted
                     ? "var(--th-text-secondary)"
                     : "var(--th-text-muted)",
+                  border: !isActive && !isCompleted
+                    ? "1px dashed var(--th-border)"
+                    : "1px solid transparent",
                 }}
               >
                 {isCompleted && (
@@ -89,7 +95,7 @@ export function PortalProgress({ portalStatus, accent }: PortalProgressProps) {
                 )}
                 {stage.label}
               </div>
-            </div>
+            </Fragment>
           );
         })}
       </div>

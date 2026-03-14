@@ -49,6 +49,7 @@ export interface PortalBrief {
   brief_text: string | null;
   tags: Record<string, unknown> | null;
   quote: Record<string, unknown> | null;
+  project_phases: { phase: string; weeks: string; deliverable: string }[] | null;
 }
 
 export interface PortalDesigner {

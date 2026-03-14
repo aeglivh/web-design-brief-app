@@ -78,6 +78,15 @@ export interface Brief {
   form_snapshot: Record<string, unknown>;
   status: BriefStatus;
   created_at: string;
+  // Portal fields
+  portal_status?: string;
+  brief_visible?: boolean;
+  quote_visible?: boolean;
+  contract_visible?: boolean;
+  portal_paused?: boolean;
+  deposit_url?: string;
+  deposit_paid?: boolean;
+  project_phases?: { phase: string; weeks: string; deliverable: string }[];
 }
 
 export interface BriefTags {

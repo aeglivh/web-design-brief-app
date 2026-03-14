@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { authFetch, API_BASE } from "@/lib/api";
 import type { Designer } from "@/lib/types";
 
@@ -6,11 +6,13 @@ export function useDesigner(session: unknown) {
   const [designer, setDesigner] = useState<Designer | null>(null);
   const [loading, setLoading] = useState(true);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
     if (!session) return;
+    const isInitial = !hasFetched.current;
     (async () => {
-      setLoading(true);
+      if (isInitial) setLoading(true);
       try {
         const res = await authFetch(`${API_BASE}/api/designer`);
         const data = await res.json();
@@ -22,6 +24,7 @@ export function useDesigner(session: unknown) {
       } catch {
         // ignore
       }
+      hasFetched.current = true;
       setLoading(false);
     })();
   }, [session]);

@@ -63,6 +63,7 @@ module.exports = async (req, res) => {
     brief_text: brief.brief_visible ? brief.brief_text : null,
     tags: brief.brief_visible ? brief.tags : null,
     quote: brief.quote_visible ? brief.quote : null,
+    project_phases: brief.project_phases || null,
   };
 
   // Load contract if visible
