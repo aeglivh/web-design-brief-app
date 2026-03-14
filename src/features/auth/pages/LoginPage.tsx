@@ -76,15 +76,15 @@ export default function LoginPage() {
       className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden"
       style={{ backgroundColor: "var(--th-bg)" }}
     >
-      {/* Animated background orbs */}
+      {/* Ambient light orbs — warm neutral glows */}
       <div
         className="absolute pointer-events-none"
         style={{
           width: 600, height: 600,
           top: "-15%", left: "-10%",
           background: isDark
-            ? "radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 65%)"
-            : "radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 65%)",
+            ? "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 65%)"
+            : "radial-gradient(circle, rgba(168,162,158,0.08) 0%, transparent 65%)",
           animation: "float-1 12s ease-in-out infinite",
         }}
       />
@@ -94,8 +94,8 @@ export default function LoginPage() {
           width: 500, height: 500,
           bottom: "-10%", right: "-5%",
           background: isDark
-            ? "radial-gradient(circle, rgba(236,72,153,0.10) 0%, transparent 65%)"
-            : "radial-gradient(circle, rgba(236,72,153,0.06) 0%, transparent 65%)",
+            ? "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 65%)"
+            : "radial-gradient(circle, rgba(214,211,209,0.10) 0%, transparent 65%)",
           animation: "float-2 15s ease-in-out infinite",
         }}
       />
@@ -105,8 +105,8 @@ export default function LoginPage() {
           width: 400, height: 400,
           top: "40%", right: "30%",
           background: isDark
-            ? "radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 65%)"
-            : "radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 65%)",
+            ? "radial-gradient(circle, rgba(255,255,255,0.025) 0%, transparent 65%)"
+            : "radial-gradient(circle, rgba(180,175,170,0.06) 0%, transparent 65%)",
           animation: "float-3 18s ease-in-out infinite",
         }}
       />
@@ -130,8 +130,8 @@ export default function LoginPage() {
           className="absolute -inset-px rounded-[25px] pointer-events-none"
           style={{
             background: isDark
-              ? "linear-gradient(135deg, rgba(99,102,241,0.2), rgba(236,72,153,0.1), rgba(59,130,246,0.15))"
-              : "linear-gradient(135deg, rgba(99,102,241,0.12), rgba(236,72,153,0.06), rgba(59,130,246,0.1))",
+              ? "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03), rgba(255,255,255,0.06))"
+              : "linear-gradient(135deg, rgba(0,0,0,0.04), rgba(0,0,0,0.02), rgba(0,0,0,0.03))",
             filter: "blur(1px)",
           }}
         />
@@ -153,13 +153,13 @@ export default function LoginPage() {
               : "0 32px 64px -16px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.04), inset 0 1px 0 0 rgba(255,255,255,0.8)",
           }}
         >
-          {/* Inner highlight */}
+          {/* Inner highlight — warm neutral glow */}
           <div
             className="absolute inset-0 rounded-[24px] pointer-events-none"
             style={{
               background: isDark
-                ? "radial-gradient(ellipse at 30% 0%, rgba(99,102,241,0.08) 0%, transparent 50%)"
-                : "radial-gradient(ellipse at 30% 0%, rgba(99,102,241,0.05) 0%, transparent 50%)",
+                ? "radial-gradient(ellipse at 30% 0%, rgba(255,255,255,0.04) 0%, transparent 50%)"
+                : "radial-gradient(ellipse at 30% 0%, rgba(0,0,0,0.02) 0%, transparent 50%)",
             }}
           />
 
@@ -265,10 +265,10 @@ export default function LoginPage() {
                     color: "var(--th-text)",
                   }}
                   onFocus={(e) => {
-                    e.target.style.borderColor = isDark ? "rgba(99,102,241,0.5)" : "rgba(99,102,241,0.4)";
+                    e.target.style.borderColor = isDark ? "rgba(161,161,170,0.4)" : "rgba(82,82,91,0.3)";
                     e.target.style.boxShadow = isDark
-                      ? "0 0 0 3px rgba(99,102,241,0.1)"
-                      : "0 0 0 3px rgba(99,102,241,0.08)";
+                      ? "0 0 0 3px rgba(161,161,170,0.08)"
+                      : "0 0 0 3px rgba(82,82,91,0.06)";
                   }}
                   onBlur={(e) => {
                     e.target.style.borderColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
@@ -294,10 +294,10 @@ export default function LoginPage() {
                     placeholder={tab === "signup" ? "Min. 8 characters" : "Enter password"}
                     autoComplete={tab === "signin" ? "current-password" : "new-password"}
                     onFocus={(e) => {
-                      e.target.style.borderColor = isDark ? "rgba(99,102,241,0.5)" : "rgba(99,102,241,0.4)";
+                      e.target.style.borderColor = isDark ? "rgba(161,161,170,0.4)" : "rgba(82,82,91,0.3)";
                       e.target.style.boxShadow = isDark
-                        ? "0 0 0 3px rgba(99,102,241,0.1)"
-                        : "0 0 0 3px rgba(99,102,241,0.08)";
+                        ? "0 0 0 3px rgba(161,161,170,0.08)"
+                        : "0 0 0 3px rgba(82,82,91,0.06)";
                     }}
                     onBlur={(e) => {
                       e.target.style.borderColor = isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)";
@@ -363,9 +363,11 @@ export default function LoginPage() {
               style={{
                 height: "48px",
                 marginTop: "36px",
-                background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%)",
-                color: "white",
-                boxShadow: "0 4px 16px -4px rgba(99,102,241,0.4), inset 0 1px 0 rgba(255,255,255,0.15)",
+                background: isDark ? "#fafafa" : "#18181b",
+                color: isDark ? "#18181b" : "#fafafa",
+                boxShadow: isDark
+                  ? "0 4px 16px -4px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.15)"
+                  : "0 4px 16px -4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06)",
                 border: "none",
               }}
             >
@@ -386,7 +388,7 @@ export default function LoginPage() {
             <button
               onClick={() => switchTab(tab === "signin" ? "signup" : "signin")}
               className="font-semibold cursor-pointer underline-offset-2 bg-transparent transition-colors"
-              style={{ color: isDark ? "#a5b4fc" : "#6366f1" }}
+              style={{ color: "var(--th-text)" }}
             >
               {tab === "signin" ? "Create one" : "Sign in"}
             </button>

@@ -112,7 +112,7 @@ function SectionToggle({
 
 export function BrandingForm({ form, onChange, onSave, accent, saved, error }: BrandingFormProps) {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    studio: true,
+    studio: false,
     colors: false,
     typography: false,
   });

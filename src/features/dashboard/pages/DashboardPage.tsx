@@ -72,6 +72,22 @@ export default function DashboardPage() {
     }
   }, [briefs, urlBriefId, selectedBrief]);
 
+  // Dynamically load Google Fonts for branding preview
+  const headingFont = brandingForm?.heading_font || designer?.heading_font || "Inter";
+  const bodyFont = brandingForm?.body_font || designer?.body_font || "Inter";
+  useEffect(() => {
+    const fonts = new Set([headingFont, bodyFont].filter((f) => f && f !== "Inter"));
+    if (fonts.size === 0) return;
+    const families = [...fonts].map((f) => `family=${f.replace(/ /g, "+")}:wght@300;400;500;600;700`).join("&");
+    const id = "branding-fonts";
+    if (document.getElementById(id)) document.getElementById(id)!.remove();
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?${families}&display=swap`;
+    document.head.appendChild(link);
+  }, [headingFont, bodyFont]);
+
   const copyLink = () => {
     const url = `${window.location.origin}/studio/${designer?.slug}`;
     navigator.clipboard.writeText(url).catch(() => {
@@ -120,22 +136,6 @@ export default function DashboardPage() {
   const acc = brandingForm?.accent_color || designer?.accent_color || "#3b82f6";
   const barColor = brandingForm?.dashboard_bar_colour || designer?.dashboard_bar_colour || "#0f172a";
   const bgColor = brandingForm?.dashboard_bg_colour || designer?.dashboard_bg_colour || "";
-
-  // Dynamically load Google Fonts for branding preview
-  const headingFont = brandingForm?.heading_font || designer?.heading_font || "Inter";
-  const bodyFont = brandingForm?.body_font || designer?.body_font || "Inter";
-  useEffect(() => {
-    const fonts = new Set([headingFont, bodyFont].filter((f) => f && f !== "Inter"));
-    if (fonts.size === 0) return;
-    const families = [...fonts].map((f) => `family=${f.replace(/ /g, "+")}:wght@300;400;500;600;700`).join("&");
-    const id = "branding-fonts";
-    if (document.getElementById(id)) document.getElementById(id)!.remove();
-    const link = document.createElement("link");
-    link.id = id;
-    link.rel = "stylesheet";
-    link.href = `https://fonts.googleapis.com/css2?${families}&display=swap`;
-    document.head.appendChild(link);
-  }, [headingFont, bodyFont]);
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
@@ -236,7 +236,7 @@ export default function DashboardPage() {
         barColor={barColor}
         bgColor={bgColor}
         sidebar={sidebarContent}
-        fullWidth={activeTab === "briefs"}
+        fullWidth
       >
         {activeTab === "briefs" && (
           <BriefsList
@@ -255,7 +255,7 @@ export default function DashboardPage() {
         )}
 
         {activeTab === "rates" && (
-          <div className="max-w-[680px] mx-auto" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          <div  style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             <h2 className="text-[20px] font-light tracking-[-0.02em] text-th-text mb-2">
               Rate Configuration
             </h2>

@@ -20,7 +20,7 @@ export function BriefCard({ brief, accent, onClick, onDelete }: BriefCardProps) 
   return (
     <div
       onClick={onClick}
-      className="group flex items-center gap-4 px-4 py-4 bg-th-surface border border-transparent hover:border-th-border hover:bg-th-surface-hover rounded-[16px] cursor-pointer transition-all duration-200 ease-out"
+      className="group flex items-center gap-4 px-4 py-4 bg-th-surface border border-th-border-light hover:border-th-border hover:bg-th-surface-hover rounded-[16px] cursor-pointer transition-all duration-200 ease-out"
     >
       {/* Avatar */}
       <div

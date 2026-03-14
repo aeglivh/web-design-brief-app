@@ -58,8 +58,10 @@ export function TopBar({ studioName, slug, accent, barColor }: TopBarProps) {
           ? "1px solid rgba(0,0,0,0.06)"
           : "1px solid var(--th-border)",
         boxShadow: light
-          ? undefined
-          : "0 24px 48px -12px rgba(0,0,0,0.5), inset 0 1px 1px 0 var(--th-border-light)",
+          ? "0 1px 2px rgba(0,0,0,0.04)"
+          : isDark
+            ? "0 8px 24px -8px rgba(0,0,0,0.35), inset 0 1px 0 var(--th-border-light)"
+            : "0 1px 3px rgba(0,0,0,0.06)",
       }}
     >
       <div className="flex items-center gap-3">

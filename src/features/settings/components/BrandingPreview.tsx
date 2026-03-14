@@ -22,7 +22,14 @@ export function BrandingPreview({ form }: BrandingPreviewProps) {
 
   return (
     <div>
-      <p className="text-[11px] font-medium text-th-muted uppercase tracking-[0.12em] mb-4">Live preview</p>
+      <h2 className="text-[20px] font-light tracking-[-0.02em] text-th-text" style={{ marginBottom: 8 }}>
+        Branding Preview
+      </h2>
+      <p className="text-[13px] text-th-muted leading-relaxed" style={{ marginBottom: 28 }}>
+        These previews update live as you change settings in the sidebar. The dashboard preview shows your top bar and content area. The client form preview shows what clients see when filling out the intake form at your studio link.
+      </p>
+
+      <p className="text-[11px] font-medium text-th-muted uppercase tracking-[0.12em]" style={{ marginBottom: 12 }}>Dashboard</p>
 
       {/* Dashboard bar preview */}
       <div className="rounded-xl overflow-hidden mb-6" style={{ border: "1px solid var(--th-border)" }}>
@@ -101,7 +108,7 @@ export function BrandingPreview({ form }: BrandingPreviewProps) {
       </div>
 
       {/* Client form preview */}
-      <p className="text-[11px] font-medium text-th-muted uppercase tracking-[0.12em] mb-4">Client form</p>
+      <p className="text-[11px] font-medium text-th-muted uppercase tracking-[0.12em]" style={{ marginTop: 32, marginBottom: 12 }}>Client form</p>
       <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--th-border)" }}>
         <div
           className="p-6"
