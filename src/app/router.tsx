@@ -15,8 +15,8 @@ const LoginPage = React.lazy(
 const DashboardPage = React.lazy(
   () => import("@/features/dashboard/pages/DashboardPage")
 );
-const IntakeFormPage = React.lazy(
-  () => import("@/features/intake/pages/IntakeFormPage")
+const StudioRoute = React.lazy(
+  () => import("@/features/portal/StudioRoute")
 );
 
 function Loading() {
@@ -58,7 +58,7 @@ export function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/studio/:slug" element={<IntakeFormPage />} />
+            <Route path="/studio/:slug" element={<StudioRoute />} />
           </Routes>
         </React.Suspense>
       </BrowserRouter>
