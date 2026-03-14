@@ -15,13 +15,18 @@ export function useAuth(): Session | null | undefined {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
 
   useEffect(() => {
+    let settled = false;
+    const timeout = setTimeout(() => {
+      if (!settled) { settled = true; setSession(null); }
+    }, 3000);
     supabase.auth.getSession()
-      .then(({ data }) => setSession(data.session))
-      .catch(() => setSession(null));
+      .then(({ data }) => { if (!settled) { settled = true; setSession(data.session); } })
+      .catch(() => { if (!settled) { settled = true; setSession(null); } })
+      .finally(() => clearTimeout(timeout));
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
-    return () => subscription.unsubscribe();
+    return () => { clearTimeout(timeout); subscription.unsubscribe(); };
   }, []);
 
   return session;
