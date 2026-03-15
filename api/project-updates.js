@@ -77,9 +77,14 @@ module.exports = async (req, res) => {
     return res.status(500).json({ error: 'Failed to create update' });
   }
 
-  // Auto-update portal_status to "complete" when project is finished
-  const finishLabels = ['project complete', 'launch day'];
-  if (finishLabels.includes(body.status_label.toLowerCase())) {
+  // Auto-update portal_status based on status label
+  const label = body.status_label.toLowerCase();
+  if (label === 'launch day') {
+    await supabase
+      .from('briefs')
+      .update({ portal_status: 'launch' })
+      .eq('id', body.brief_id);
+  } else if (label === 'project complete') {
     await supabase
       .from('briefs')
       .update({ portal_status: 'complete' })

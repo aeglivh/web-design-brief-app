@@ -8,6 +8,7 @@ const PORTAL_STATUSES = [
   { value: "contract_published", label: "Contract Published" },
   { value: "contract_signed", label: "Contract Signed" },
   { value: "in_progress", label: "In Progress" },
+  { value: "launch", label: "Launch Day" },
   { value: "complete", label: "Complete" },
 ];
 

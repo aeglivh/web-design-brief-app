@@ -7,6 +7,7 @@ const STAGES = [
   { key: "quote", label: "Quote" },
   { key: "contract", label: "Contract" },
   { key: "in_progress", label: "In Progress" },
+  { key: "launch", label: "Launch Day" },
   { key: "complete", label: "Complete" },
 ];
 
@@ -17,7 +18,8 @@ const STATUS_TO_STAGE: Record<string, number> = {
   contract_published: 3,
   contract_signed: 4,
   in_progress: 4,
-  complete: 5,
+  launch: 5,
+  complete: 6,
 };
 
 interface PortalProgressProps {
