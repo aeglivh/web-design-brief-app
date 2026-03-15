@@ -6,6 +6,7 @@ import { PortalProgress } from "./PortalProgress";
 import { PortalPhases } from "./PortalPhases";
 import { PortalDocuments } from "./PortalDocuments";
 import { PortalTimeline } from "./PortalTimeline";
+import { PortalLinks } from "./PortalLinks";
 
 export default function PortalPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -159,6 +160,9 @@ export default function PortalPage() {
 
         {/* Documents (brief, quote, contract) */}
         <PortalDocuments brief={brief} contract={data.contract} accent={accent} />
+
+        {/* Project links */}
+        <PortalLinks links={data.links} accent={accent} />
 
         {/* Timeline section */}
         <div

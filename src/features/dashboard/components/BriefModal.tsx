@@ -7,6 +7,7 @@ import { useContractGeneration } from "@/features/contract/hooks/useContractGene
 import { ContractModal } from "@/features/contract/components/ContractModal";
 import { ProjectUpdatesPanel } from "./ProjectUpdatesPanel";
 import { PortalControls } from "./PortalControls";
+import { ProjectLinksPanel } from "./ProjectLinksPanel";
 import { authFetch, API_BASE } from "@/lib/api";
 import { isLight } from "@/lib/utils";
 import type { Brief, Quote } from "@/lib/types";
@@ -382,6 +383,7 @@ export function BriefModal({
               project_phases: brief.project_phases,
             }}
           />
+          <ProjectLinksPanel briefId={brief.id} accent={accent} />
       </div>
     </div>
   );
