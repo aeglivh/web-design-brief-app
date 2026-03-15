@@ -66,7 +66,7 @@ function DocCard({
               width: 8,
               height: 8,
               borderRadius: "50%",
-              backgroundColor: accent,
+              backgroundColor: "var(--th-text-secondary)",
               flexShrink: 0,
             }}
           />
@@ -373,7 +373,7 @@ function ContractContent({ data, accent }: { data: ContractData; accent: string 
                 style={{
                   position: "absolute",
                   left: 0,
-                  color: accent,
+                  color: "var(--th-text-muted)",
                   fontWeight: 600,
                 }}
               >
@@ -439,7 +439,7 @@ function ContractContent({ data, accent }: { data: ContractData; accent: string 
               <span
                 className="text-[11px] font-mono font-medium"
                 style={{
-                  color: accent,
+                  color: "var(--th-text-secondary)",
                   minWidth: 50,
                   flexShrink: 0,
                 }}
@@ -508,7 +508,7 @@ function ContractContent({ data, accent }: { data: ContractData; accent: string 
           <p
             className="text-[12px] font-semibold uppercase"
             style={{
-              color: accent,
+              color: "var(--th-text-secondary)",
               letterSpacing: "0.08em",
               marginBottom: 8,
             }}

@@ -118,7 +118,7 @@ export function ProjectLinksPanel({ briefId, accent }: ProjectLinksPanelProps) {
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center text-[13px] font-medium no-underline hover:opacity-80 transition-opacity"
-                style={{ color: accent, gap: 6 }}
+                style={{ color: "#3f3f46", gap: 6 }}
               >
                 <svg
                   width="12"
@@ -208,7 +208,7 @@ export function ProjectLinksPanel({ briefId, accent }: ProjectLinksPanelProps) {
           disabled={!label.trim() || !url.trim() || adding}
           className="h-8 rounded-lg text-[12px] font-medium cursor-pointer transition-all border-0 disabled:opacity-40 disabled:cursor-not-allowed"
           style={{
-            backgroundColor: accent,
+            backgroundColor: "#3f3f46",
             color: "#fff",
             alignSelf: "flex-start",
             padding: "0 16px",

@@ -109,8 +109,8 @@ function FeedbackForm({
         className="rounded-full text-[12px] font-medium cursor-pointer transition-all border hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
         style={{
           padding: "7px 20px",
-          backgroundColor: accent + "22",
-          borderColor: accent + "44",
+          backgroundColor: "rgba(63,63,70,0.08)",
+          borderColor: "rgba(63,63,70,0.15)",
           color: "var(--th-text)",
         }}
       >
@@ -158,7 +158,7 @@ export function PortalTimeline({ updates, feedbackUpdateIds, briefId, accent }: 
                   width: 15,
                   height: 15,
                   borderRadius: "50%",
-                  backgroundColor: accent,
+                  backgroundColor: "#3f3f46",
                   border: "3px solid var(--th-bg)",
                   flexShrink: 0,
                   marginTop: 2,

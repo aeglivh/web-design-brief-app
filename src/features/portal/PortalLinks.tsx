@@ -37,7 +37,7 @@ export function PortalLinks({ links, accent }: PortalLinksProps) {
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center text-[13px] font-medium no-underline hover:opacity-80 transition-opacity"
-            style={{ color: accent, gap: 8 }}
+            style={{ color: "var(--th-text-secondary)", gap: 8 }}
           >
             <svg
               width="13"
