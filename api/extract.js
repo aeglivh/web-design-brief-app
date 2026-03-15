@@ -44,7 +44,9 @@ Rules:
       }],
     });
 
-    const text = response.content.map(b => b.text || '').join('').trim();
+    let text = response.content.map(b => b.text || '').join('').trim();
+    // Strip markdown fences if Claude wraps the JSON
+    text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
     const summaryData = JSON.parse(text);
     return res.status(200).json({ summaryData });
   } catch (err) {

@@ -222,6 +222,7 @@ export default function DashboardPage() {
         <BriefModal
           brief={selectedBrief}
           studioName={designer?.studio_name || ""}
+          slug={designer?.slug || ""}
           accent={acc}
           logoUrl={designer?.logo_url}
           formBgColour={designer?.form_bg_colour}

@@ -17,8 +17,16 @@ interface ProjectPhase {
   deliverable: string;
 }
 
+interface ContractStatus {
+  designerSignedName: string | null;
+  designerSignedAt: string | null;
+  clientSignedName: string | null;
+  clientSignedAt: string | null;
+}
+
 interface PortalControlsProps {
   briefId: string;
+  slug: string;
   accent: string;
   initialValues: {
     portal_status?: string;
@@ -27,8 +35,10 @@ interface PortalControlsProps {
     contract_visible?: boolean;
     portal_paused?: boolean;
     deposit_url?: string;
+    client_email?: string;
     project_phases?: ProjectPhase[];
   };
+  contractStatus?: ContractStatus;
   onUpdate?: (fields: Record<string, unknown>) => void;
 }
 
@@ -89,13 +99,14 @@ function Toggle({
   );
 }
 
-export function PortalControls({ briefId, accent, initialValues, onUpdate }: PortalControlsProps) {
+export function PortalControls({ briefId, slug, accent, initialValues, contractStatus, onUpdate }: PortalControlsProps) {
   const [portalStatus, setPortalStatus] = useState(initialValues.portal_status || "intake_complete");
   const [briefVisible, setBriefVisible] = useState(initialValues.brief_visible ?? false);
   const [quoteVisible, setQuoteVisible] = useState(initialValues.quote_visible ?? false);
   const [contractVisible, setContractVisible] = useState(initialValues.contract_visible ?? false);
   const [portalPaused, setPortalPaused] = useState(initialValues.portal_paused ?? false);
   const [depositUrl, setDepositUrl] = useState(initialValues.deposit_url || "");
+  const [clientEmail, setClientEmail] = useState(initialValues.client_email || "");
   const [phases, setPhases] = useState<ProjectPhase[]>(initialValues.project_phases || []);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -129,9 +140,8 @@ export function PortalControls({ briefId, accent, initialValues, onUpdate }: Por
     updateField({ [field]: value });
   };
 
-  const handleStatusChange = (value: string) => {
-    setPortalStatus(value);
-    updateField({ portal_status: value });
+  const handleStatusSave = () => {
+    updateField({ portal_status: portalStatus });
   };
 
   const handleDepositSave = () => {
@@ -159,8 +169,34 @@ export function PortalControls({ briefId, accent, initialValues, onUpdate }: Por
     updateField({ project_phases: cleaned });
   };
 
+  const portalUrl = `${window.location.origin}/studio/${slug}/${briefId}`;
+
   return (
     <div>
+      {/* View Client Portal link */}
+      <a
+        href={portalUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center rounded-[16px] text-[12px] font-medium transition-all hover:opacity-80"
+        style={{
+          border: `1px solid ${accent}44`,
+          backgroundColor: accent + "12",
+          color: "var(--th-text)",
+          padding: "12px 24px",
+          marginBottom: 20,
+          gap: 8,
+          textDecoration: "none",
+        }}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+          <polyline points="15 3 21 3 21 9" />
+          <line x1="10" y1="14" x2="21" y2="3" />
+        </svg>
+        View Client Portal
+      </a>
+
       {/* Portal Status */}
       <div
         className="rounded-[16px]"
@@ -177,23 +213,149 @@ export function PortalControls({ briefId, accent, initialValues, onUpdate }: Por
         >
           Portal Status
         </p>
-        <select
-          value={portalStatus}
-          onChange={(e) => handleStatusChange(e.target.value)}
-          className="w-full rounded-xl border text-[13px] outline-none transition-colors"
-          style={{
-            padding: "10px 14px",
-            borderColor: "var(--th-border)",
-            backgroundColor: "var(--th-input-bg)",
-            color: "var(--th-text)",
-          }}
-        >
-          {PORTAL_STATUSES.map((s) => (
-            <option key={s.value} value={s.value}>{s.label}</option>
-          ))}
-        </select>
+        <div className="flex" style={{ gap: 8 }}>
+          <select
+            value={portalStatus}
+            onChange={(e) => setPortalStatus(e.target.value)}
+            className="flex-1 rounded-xl border text-[13px] outline-none transition-colors"
+            style={{
+              padding: "10px 14px",
+              borderColor: "var(--th-border)",
+              backgroundColor: "var(--th-input-bg)",
+              color: "var(--th-text)",
+            }}
+          >
+            {PORTAL_STATUSES.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={handleStatusSave}
+            disabled={saving || portalStatus === initialValues.portal_status}
+            className="rounded-xl text-[12px] font-medium cursor-pointer transition-all border hover:opacity-90 disabled:opacity-40"
+            style={{
+              padding: "10px 16px",
+              backgroundColor: accent + "22",
+              borderColor: accent + "44",
+              color: "var(--th-text)",
+            }}
+          >
+            Save
+          </button>
+        </div>
         <p className="text-[11px]" style={{ color: "var(--th-text-muted)", marginTop: 8 }}>
           Controls the progress stepper shown to the client on the portal.
+        </p>
+      </div>
+
+      {/* Contract Signing Status */}
+      {contractStatus && (contractStatus.designerSignedName || contractStatus.clientSignedName) && (
+        <div
+          className="rounded-[16px]"
+          style={{
+            border: "1px solid var(--th-border-light)",
+            background: "var(--th-surface)",
+            padding: 24,
+            marginBottom: 20,
+          }}
+        >
+          <p
+            className="text-[10px] font-medium uppercase"
+            style={{ color: "var(--th-text-muted)", letterSpacing: "0.15em", marginBottom: 16 }}
+          >
+            Contract Signatures
+          </p>
+
+          {contractStatus.designerSignedName && (
+            <div className="flex items-center" style={{ gap: 8, padding: "8px 0" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span className="text-[12px]" style={{ color: "var(--th-text-secondary)" }}>
+                <strong style={{ fontWeight: 600 }}>You signed</strong>{" "}
+                <span style={{ color: "var(--th-text-muted)" }}>
+                  — {contractStatus.designerSignedName},{" "}
+                  {contractStatus.designerSignedAt && new Date(contractStatus.designerSignedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                </span>
+              </span>
+            </div>
+          )}
+
+          {contractStatus.clientSignedName ? (
+            <div className="flex items-center" style={{ gap: 8, padding: "8px 0" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span className="text-[12px]" style={{ color: "var(--th-text-secondary)" }}>
+                <strong style={{ fontWeight: 600 }}>Client signed</strong>{" "}
+                <span style={{ color: "var(--th-text-muted)" }}>
+                  — {contractStatus.clientSignedName},{" "}
+                  {contractStatus.clientSignedAt && new Date(contractStatus.clientSignedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                </span>
+              </span>
+            </div>
+          ) : contractStatus.designerSignedName ? (
+            <div className="flex items-center" style={{ gap: 8, padding: "8px 0" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--th-text-muted)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <span className="text-[12px]" style={{ color: "var(--th-text-muted)" }}>
+                Waiting for client to counter-sign
+              </span>
+            </div>
+          ) : null}
+        </div>
+      )}
+
+      {/* Client Email */}
+      <div
+        className="rounded-[16px]"
+        style={{
+          border: "1px solid var(--th-border-light)",
+          background: "var(--th-surface)",
+          padding: 24,
+          marginBottom: 20,
+        }}
+      >
+        <p
+          className="text-[10px] font-medium uppercase"
+          style={{ color: "var(--th-text-muted)", letterSpacing: "0.15em", marginBottom: 16 }}
+        >
+          Client Email
+        </p>
+        <div className="flex" style={{ gap: 8 }}>
+          <input
+            type="email"
+            value={clientEmail}
+            onChange={(e) => setClientEmail(e.target.value)}
+            placeholder="client@example.com"
+            className="flex-1 rounded-xl border text-[13px] outline-none transition-colors"
+            style={{
+              padding: "10px 14px",
+              borderColor: "var(--th-border)",
+              backgroundColor: "var(--th-input-bg)",
+              color: "var(--th-text)",
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => updateField({ client_email: clientEmail.trim() || null })}
+            disabled={saving}
+            className="rounded-xl text-[12px] font-medium cursor-pointer transition-all border hover:opacity-90 disabled:opacity-40"
+            style={{
+              padding: "10px 16px",
+              backgroundColor: accent + "22",
+              borderColor: accent + "44",
+              color: "var(--th-text)",
+            }}
+          >
+            Save
+          </button>
+        </div>
+        <p className="text-[11px]" style={{ color: "var(--th-text-muted)", marginTop: 8 }}>
+          Notifications (updates, contract ready) are sent to this address.
         </p>
       </div>
 
@@ -420,6 +582,51 @@ export function PortalControls({ briefId, accent, initialValues, onUpdate }: Por
             </button>
           )}
         </div>
+      </div>
+
+      {/* Dev: Reset for testing */}
+      <div
+        className="rounded-[16px]"
+        style={{
+          border: "1px dashed var(--th-border)",
+          background: "transparent",
+          padding: 20,
+          marginTop: 20,
+          opacity: 0.6,
+        }}
+      >
+        <p
+          className="text-[10px] font-medium uppercase"
+          style={{ color: "var(--th-text-muted)", letterSpacing: "0.15em", marginBottom: 10 }}
+        >
+          Dev Tools
+        </p>
+        <button
+          type="button"
+          onClick={async () => {
+            console.log("[PortalControls] Reset clicked, briefId:", briefId);
+            const result = await updateField({
+              portal_status: "contract_published",
+              contract_visible: true,
+              _reset_signing: true,
+            });
+            console.log("[PortalControls] Reset result:", result);
+            setPortalStatus("contract_published");
+            setContractVisible(true);
+          }}
+          className="rounded-xl text-[11px] font-medium cursor-pointer transition-all border hover:opacity-80"
+          style={{
+            padding: "8px 14px",
+            backgroundColor: "rgba(239,68,68,0.08)",
+            borderColor: "rgba(239,68,68,0.2)",
+            color: "#ef4444",
+          }}
+        >
+          Reset to "Contract Published" (clear signature)
+        </button>
+        <p className="text-[10px]" style={{ color: "var(--th-text-muted)", marginTop: 6 }}>
+          Resets portal status &amp; clears signature so you can re-test the client signing flow.
+        </p>
       </div>
 
       {/* Status feedback */}

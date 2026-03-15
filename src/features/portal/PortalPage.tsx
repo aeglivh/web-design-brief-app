@@ -9,8 +9,8 @@ import { PortalTimeline } from "./PortalTimeline";
 import { PortalLinks } from "./PortalLinks";
 
 export default function PortalPage() {
-  const { slug } = useParams<{ slug: string }>();
-  const { data, pausedData, loading, notFound } = usePortalData(slug);
+  const { slug, briefId } = useParams<{ slug: string; briefId: string }>();
+  const { data, pausedData, loading, notFound } = usePortalData(slug, briefId);
 
   const designer = data?.designer;
   const headingFont = designer?.heading_font || "Inter";
@@ -159,7 +159,7 @@ export default function PortalPage() {
         )}
 
         {/* Documents (brief, quote, contract) */}
-        <PortalDocuments brief={brief} contract={data.contract} accent={accent} />
+        <PortalDocuments brief={brief} contract={data.contract} accent={accent} studioName={designer.studio_name || ""} />
 
         {/* Project links */}
         <PortalLinks links={data.links} accent={accent} />

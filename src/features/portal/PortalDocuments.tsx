@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { parseBrief } from "@/features/brief/lib/parseBrief";
 import { API_BASE } from "@/lib/api";
+import { buildContractHtml, downloadPdf } from "@/lib/downloadPdf";
 import type { PortalBrief, PortalContract } from "./usePortalData";
 
 interface PortalDocumentsProps {
   brief: PortalBrief;
   contract: PortalContract | null;
   accent: string;
+  studioName: string;
   onSigned?: () => void;
 }
 
@@ -525,12 +527,16 @@ function ContractSignature({
   briefId,
   signedAt,
   signedName,
+  designerSignedName,
+  designerSignedAt,
   accent,
   onSigned,
 }: {
   briefId: string;
   signedAt: string | null;
   signedName: string | null;
+  designerSignedName?: string | null;
+  designerSignedAt?: string | null;
   accent: string;
   onSigned?: () => void;
 }) {
@@ -539,36 +545,8 @@ function ContractSignature({
   const [error, setError] = useState("");
   const [justSigned, setJustSigned] = useState(false);
 
-  if (signedAt || justSigned) {
-    const displayName = justSigned ? name : signedName;
-    const displayDate = justSigned
-      ? new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
-      : new Date(signedAt!).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-
-    return (
-      <div
-        className="rounded-xl"
-        style={{
-          marginTop: 20,
-          padding: 16,
-          border: "1px solid rgba(34,197,94,0.3)",
-          backgroundColor: "rgba(34,197,94,0.08)",
-        }}
-      >
-        <div className="flex items-center" style={{ gap: 8 }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-          <span className="text-[13px] font-medium" style={{ color: "#4ade80" }}>
-            Contract signed
-          </span>
-        </div>
-        <p className="text-[12px]" style={{ color: "var(--th-text-muted)", marginTop: 6 }}>
-          Signed by {displayName} on {displayDate}
-        </p>
-      </div>
-    );
-  }
+  const formatDate = (d: string) =>
+    new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
   const handleSign = async () => {
     if (!name.trim()) return;
@@ -594,67 +572,120 @@ function ContractSignature({
   };
 
   return (
-    <div
-      className="rounded-xl"
-      style={{
-        marginTop: 20,
-        padding: 16,
-        border: "1px solid var(--th-border-light)",
-        backgroundColor: "var(--th-surface-hover)",
-      }}
-    >
-      <p className="text-[12px] font-medium" style={{ color: "var(--th-text-secondary)", marginBottom: 10 }}>
-        By typing your full name below and clicking "Sign Contract", you agree to the terms outlined above.
-      </p>
-
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Your full name"
-        className="w-full rounded-lg border text-[13px] outline-none"
-        style={{
-          padding: "10px 14px",
-          borderColor: "var(--th-border)",
-          backgroundColor: "var(--th-input-bg)",
-          color: "var(--th-text)",
-          marginBottom: 10,
-        }}
-      />
-
-      {error && (
-        <p className="text-[11px]" style={{ color: "#ef4444", marginBottom: 8 }}>{error}</p>
+    <div style={{ marginTop: 20 }}>
+      {/* Designer Signature (always shown if designer has signed) */}
+      {designerSignedName && designerSignedAt && (
+        <div
+          className="rounded-xl"
+          style={{
+            padding: 16,
+            marginBottom: 12,
+            border: "1px solid rgba(34,197,94,0.3)",
+            backgroundColor: "rgba(34,197,94,0.06)",
+          }}
+        >
+          <div className="flex items-center" style={{ gap: 8 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <span className="text-[13px] font-medium" style={{ color: "#4ade80" }}>
+              Signed by designer
+            </span>
+          </div>
+          <p className="text-[12px]" style={{ color: "var(--th-text-muted)", marginTop: 6 }}>
+            {designerSignedName} — {formatDate(designerSignedAt)}
+          </p>
+        </div>
       )}
 
-      <button
-        type="button"
-        onClick={handleSign}
-        disabled={!name.trim() || submitting}
-        className="w-full rounded-full text-[13px] font-semibold cursor-pointer transition-all border hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
-        style={{
-          padding: "10px 0",
-          backgroundColor: accent,
-          borderColor: accent,
-          color: "#fff",
-        }}
-      >
-        {submitting ? "Signing..." : "Sign Contract"}
-      </button>
+      {/* Client Signature */}
+      {signedAt || justSigned ? (
+        <div
+          className="rounded-xl"
+          style={{
+            padding: 16,
+            border: "1px solid rgba(34,197,94,0.3)",
+            backgroundColor: "rgba(34,197,94,0.08)",
+          }}
+        >
+          <div className="flex items-center" style={{ gap: 8 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            <span className="text-[13px] font-medium" style={{ color: "#4ade80" }}>
+              Contract signed
+            </span>
+          </div>
+          <p className="text-[12px]" style={{ color: "var(--th-text-muted)", marginTop: 6 }}>
+            Signed by {justSigned ? name : signedName} on{" "}
+            {justSigned
+              ? new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+              : formatDate(signedAt!)}
+          </p>
+        </div>
+      ) : (
+        <div
+          className="rounded-xl"
+          style={{
+            padding: 16,
+            border: "1px solid var(--th-border-light)",
+            backgroundColor: "var(--th-surface-hover)",
+          }}
+        >
+          <p className="text-[12px] font-medium" style={{ color: "var(--th-text-secondary)", marginBottom: 10 }}>
+            By typing your full name below and clicking "Sign Contract", you agree to the terms outlined above.
+          </p>
 
-      <p
-        className="text-[10px] leading-relaxed"
-        style={{ color: "var(--th-text-muted)", marginTop: 10, opacity: 0.7 }}
-      >
-        By typing your full name and clicking "Sign Contract", you are providing a valid electronic signature
-        in accordance with the eIDAS Regulation (EU) and the ESIGN Act (US). Your name, timestamp, and IP
-        address are recorded as proof of agreement.
-      </p>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Your full name"
+            className="w-full rounded-lg border text-[13px] outline-none"
+            style={{
+              padding: "10px 14px",
+              borderColor: "var(--th-border)",
+              backgroundColor: "var(--th-input-bg)",
+              color: "var(--th-text)",
+              marginBottom: 10,
+            }}
+          />
+
+          {error && (
+            <p className="text-[11px]" style={{ color: "#ef4444", marginBottom: 8 }}>{error}</p>
+          )}
+
+          <button
+            type="button"
+            onClick={handleSign}
+            disabled={!name.trim() || submitting}
+            className="w-full rounded-full text-[13px] font-semibold cursor-pointer transition-all border hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{
+              padding: "10px 0",
+              backgroundColor: accent,
+              borderColor: accent,
+              color: "#fff",
+            }}
+          >
+            {submitting ? "Signing..." : "Sign Contract"}
+          </button>
+
+          <p
+            className="text-[10px] leading-relaxed"
+            style={{ color: "var(--th-text-muted)", marginTop: 10, opacity: 0.7 }}
+          >
+            By typing your full name and clicking "Sign Contract", you are providing a valid electronic signature
+            in accordance with the eIDAS Regulation (EU) and the ESIGN Act (US). Your name, timestamp, and IP
+            address are recorded as proof of agreement.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
 
 /* ── Main Export ── */
-export function PortalDocuments({ brief, contract, accent, onSigned }: PortalDocumentsProps) {
+export function PortalDocuments({ brief, contract, accent, studioName, onSigned }: PortalDocumentsProps) {
   const hasAny = brief.brief_visible || brief.quote_visible || brief.contract_visible;
   if (!hasAny) return null;
 
@@ -679,9 +710,49 @@ export function PortalDocuments({ brief, contract, accent, onSigned }: PortalDoc
             briefId={brief.id}
             signedAt={brief.signed_at}
             signedName={brief.signed_name}
+            designerSignedName={contract.designer_signed_name}
+            designerSignedAt={contract.designer_signed_at}
             accent={accent}
             onSigned={onSigned}
           />
+          <button
+            type="button"
+            onClick={async () => {
+              const html = buildContractHtml({
+                studioName,
+                clientName: brief.client_name,
+                businessName: brief.business_name,
+                accent,
+                data: contract.contract_data,
+                designerSignature: contract.designer_signed_name
+                  ? { name: contract.designer_signed_name, date: contract.designer_signed_at || null }
+                  : undefined,
+                clientSignature: brief.signed_name
+                  ? { name: brief.signed_name, date: brief.signed_at }
+                  : undefined,
+              });
+              await downloadPdf(html, `Contract — ${brief.business_name || brief.client_name}.pdf`);
+            }}
+            className="w-full rounded-xl text-[12px] font-medium cursor-pointer transition-all hover:opacity-80"
+            style={{
+              marginTop: 16,
+              padding: "10px 0",
+              backgroundColor: "var(--th-surface-hover)",
+              border: "1px solid var(--th-border-light)",
+              color: "var(--th-text-secondary)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 6,
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Download Contract (PDF)
+          </button>
         </DocCard>
       )}
     </div>

@@ -58,6 +58,7 @@ export function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/studio/:slug/:briefId" element={<StudioRoute />} />
             <Route path="/studio/:slug" element={<StudioRoute />} />
           </Routes>
         </React.Suspense>

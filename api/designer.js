@@ -50,7 +50,7 @@ module.exports = async (req, res) => {
 
     const { data, error } = await supabase
       .from('designers')
-      .insert({ id: user.id, studio_name, slug })
+      .insert({ id: user.id, studio_name, slug, designer_email: user.email })
       .select()
       .single();
     if (error) {

@@ -8,8 +8,8 @@ module.exports = async (req, res) => {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { slug } = req.query || {};
-  if (!slug) return res.status(400).json({ error: 'slug is required' });
+  const { slug, briefId } = req.query || {};
+  if (!slug || !briefId) return res.status(400).json({ error: 'slug and briefId are required' });
 
   // Look up designer by slug
   const { data: designer, error: dErr } = await supabase
@@ -20,16 +20,15 @@ module.exports = async (req, res) => {
 
   if (dErr || !designer) return res.status(404).json({ error: 'Studio not found' });
 
-  // Find the most recent brief for this designer
+  // Fetch the specific brief by ID — must belong to this designer
   const { data: brief, error: bErr } = await supabase
     .from('briefs')
     .select('*')
+    .eq('id', briefId)
     .eq('designer_id', designer.id)
-    .order('created_at', { ascending: false })
-    .limit(1)
     .maybeSingle();
 
-  if (!brief) return res.status(404).json({ error: 'No project found' });
+  if (!brief) return res.status(404).json({ error: 'Project not found' });
 
   // If portal is paused, return minimal data
   if (brief.portal_paused) {
@@ -71,7 +70,7 @@ module.exports = async (req, res) => {
   if (brief.contract_visible) {
     const { data: c } = await supabase
       .from('contracts')
-      .select('id, contract_data, status, created_at')
+      .select('id, contract_data, status, created_at, designer_signed_name, designer_signed_at')
       .eq('brief_id', brief.id)
       .order('created_at', { ascending: false })
       .limit(1)

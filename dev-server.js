@@ -26,6 +26,7 @@ const routes = {
   '/api/project-feedback': './api/project-feedback.js',
   '/api/portal-sign': './api/portal-sign.js',
   '/api/project-links': './api/project-links.js',
+  '/api/contract-sign': './api/contract-sign.js',
 };
 
 const server = http.createServer(async (req, res) => {

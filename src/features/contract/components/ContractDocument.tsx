@@ -1,5 +1,10 @@
 import type { ContractData } from "@/lib/types";
 
+interface SignatureInfo {
+  name: string | null;
+  date: string | null;
+}
+
 interface ContractDocumentProps {
   data: ContractData;
   onChange: (data: ContractData) => void;
@@ -9,6 +14,8 @@ interface ContractDocumentProps {
   currency: string;
   accent: string;
   fontSize?: number;
+  designerSignature?: SignatureInfo;
+  clientSignature?: SignatureInfo;
 }
 
 function EditableText({
@@ -68,6 +75,8 @@ export function ContractDocument({
   currency,
   accent,
   fontSize = 14,
+  designerSignature,
+  clientSignature,
 }: ContractDocumentProps) {
   const today = new Date().toLocaleDateString("en-GB", {
     day: "numeric",
@@ -350,8 +359,8 @@ export function ContractDocument({
           Signatures
         </p>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48 }}>
-          <SignatureBlock label="Designer" name={studioName} />
-          <SignatureBlock label="Client" name={clientName} business={businessName} />
+          <SignatureBlock label="Designer" name={studioName} signature={designerSignature} />
+          <SignatureBlock label="Client" name={clientName} business={businessName} signature={clientSignature} />
         </div>
       </div>
     </div>
@@ -416,11 +425,17 @@ function SignatureBlock({
   label,
   name,
   business,
+  signature,
 }: {
   label: string;
   name: string;
   business?: string;
+  signature?: { name: string | null; date: string | null };
 }) {
+  const isSigned = signature?.name && signature?.date;
+  const formatDate = (d: string) =>
+    new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
+
   return (
     <div>
       <p
@@ -429,10 +444,28 @@ function SignatureBlock({
       >
         {label}
       </p>
-      <div style={{ borderBottom: "1px solid #cbd5e1", height: 40, marginBottom: 8 }} />
+      {isSigned ? (
+        <>
+          <p style={{ fontSize: 18, fontFamily: "'Georgia', serif", fontStyle: "italic", color: "#0f172a", marginBottom: 4 }}>
+            {signature.name}
+          </p>
+          <div style={{ borderBottom: "1px solid #cbd5e1", marginBottom: 8 }} />
+        </>
+      ) : (
+        <div style={{ borderBottom: "1px solid #cbd5e1", height: 40, marginBottom: 8 }} />
+      )}
       <p style={{ fontSize: 14, fontWeight: 500, color: "#0f172a" }}>{name}</p>
       {business && <p style={{ fontSize: 12, color: "#94a3b8" }}>{business}</p>}
-      <div style={{ borderBottom: "1px solid #cbd5e1", height: 32, marginTop: 24, marginBottom: 8 }} />
+      {isSigned ? (
+        <>
+          <p style={{ fontSize: 14, color: "#334155", marginTop: 24 }}>
+            {formatDate(signature.date!)}
+          </p>
+          <div style={{ borderBottom: "1px solid #cbd5e1", marginBottom: 8 }} />
+        </>
+      ) : (
+        <div style={{ borderBottom: "1px solid #cbd5e1", height: 32, marginTop: 24, marginBottom: 8 }} />
+      )}
       <p style={{ fontSize: 12, color: "#94a3b8" }}>Date</p>
     </div>
   );

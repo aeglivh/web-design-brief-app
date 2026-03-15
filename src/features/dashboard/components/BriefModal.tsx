@@ -17,6 +17,7 @@ type ModalTab = "brief" | "updates" | "portal";
 interface BriefModalProps {
   brief: Brief;
   studioName: string;
+  slug: string;
   accent: string;
   logoUrl?: string;
   formBgColour?: string;
@@ -35,6 +36,7 @@ interface SummaryData {
 export function BriefModal({
   brief,
   studioName,
+  slug,
   accent,
   formBgColour,
   onClose,
@@ -57,7 +59,7 @@ export function BriefModal({
   const [quoteError, setQuoteError] = useState("");
   const [showQuote, setShowQuote] = useState(false);
   const [showContract, setShowContract] = useState(false);
-  const { generate: generateContract, generating: contractLoading, load: loadContract, save: saveContract, saving: contractSaving, contract, error: contractError } = useContractGeneration();
+  const { generate: generateContract, generating: contractLoading, load: loadContract, save: saveContract, sign: signContract, saving: contractSaving, contract, error: contractError } = useContractGeneration();
 
   // Load existing contract on mount
   useEffect(() => {
@@ -131,7 +133,10 @@ export function BriefModal({
         currency={brief.quote?.currency || "CHF"}
         accent={accent}
         onSave={saveContract}
+        onSign={signContract}
         saving={contractSaving}
+        designerSignedName={contract.designer_signed_name}
+        designerSignedAt={contract.designer_signed_at}
         onClose={() => setShowContract(false)}
       />
     );
@@ -192,6 +197,25 @@ export function BriefModal({
                 {tab === "brief" ? "Brief" : tab === "updates" ? "Updates" : "Portal"}
               </button>
             ))}
+            <div style={{ width: 1, height: 20, backgroundColor: "var(--th-border)", margin: "0 4px" }} />
+            <a
+              href={`${window.location.origin}/studio/${slug}/${brief.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-8 px-3 rounded-lg text-[12px] font-medium transition-all flex items-center"
+              style={{
+                color: "var(--th-text-muted)",
+                textDecoration: "none",
+                gap: 5,
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+              Client Portal
+            </a>
           </div>
           <div className="flex items-center gap-2">
             {activeTab === "brief" && (
@@ -256,7 +280,7 @@ export function BriefModal({
                     borderColor: "var(--th-border)",
                   }}
                 >
-                  Print / PDF
+                  Download Brief
                 </button>
               </>
             )}
@@ -372,6 +396,7 @@ export function BriefModal({
       >
           <PortalControls
             briefId={brief.id}
+            slug={slug}
             accent={accent}
             initialValues={{
               portal_status: brief.portal_status,
@@ -380,7 +405,14 @@ export function BriefModal({
               contract_visible: brief.contract_visible,
               portal_paused: brief.portal_paused,
               deposit_url: brief.deposit_url,
+              client_email: brief.client_email,
               project_phases: brief.project_phases,
+            }}
+            contractStatus={{
+              designerSignedName: contract?.designer_signed_name || null,
+              designerSignedAt: contract?.designer_signed_at || null,
+              clientSignedName: brief.signed_name || null,
+              clientSignedAt: brief.signed_at || null,
             }}
           />
           <ProjectLinksPanel briefId={brief.id} accent={accent} />

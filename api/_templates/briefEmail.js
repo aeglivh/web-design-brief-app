@@ -80,7 +80,7 @@ function buildDesignerNotificationEmail({ studioName, acc, clientName, clientEma
 async function sendEmail(payload) {
   const html    = buildEmailHtml(payload);
   const subject = `Your Web Design Brief — ${payload.studioName}`;
-  const from    = process.env.EMAIL_FROM || `${payload.studioName} <hello@webdesignbrief.studio>`;
+  const from    = process.env.EMAIL_FROM || `${payload.studioName} <noreply@mail.debrieft.app>`;
   const targets = [payload.clientEmail, payload.designerEmail].filter(Boolean);
 
   if (process.env.RESEND_API_KEY) {

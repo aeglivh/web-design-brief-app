@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
 
     const { data: contract, error: err } = await supabase
       .from('contracts')
-      .select('id, contract_data, status, created_at')
+      .select('id, contract_data, status, created_at, designer_signed_name, designer_signed_at')
       .eq('brief_id', briefId)
       .eq('designer_id', user.id)
       .order('created_at', { ascending: false })
@@ -43,7 +43,7 @@ module.exports = async (req, res) => {
       .update({ contract_data, updated_at: new Date().toISOString() })
       .eq('id', contractId)
       .eq('designer_id', user.id)
-      .select('id, contract_data, status, created_at')
+      .select('id, contract_data, status, created_at, designer_signed_name, designer_signed_at')
       .single();
 
     if (err || !contract) return res.status(404).json({ error: 'Contract not found' });
@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
   // Check if contract already exists for this brief
   const { data: existing } = await supabase
     .from('contracts')
-    .select('id, contract_data, status, created_at')
+    .select('id, contract_data, status, created_at, designer_signed_name, designer_signed_at')
     .eq('brief_id', briefId)
     .eq('designer_id', user.id)
     .order('created_at', { ascending: false })
@@ -121,7 +121,7 @@ module.exports = async (req, res) => {
         contract_data,
         status:        'draft',
       })
-      .select('id, contract_data, status, created_at')
+      .select('id, contract_data, status, created_at, designer_signed_name, designer_signed_at')
       .single();
     if (contractErr) throw contractErr;
 

@@ -2,6 +2,7 @@
 
 const { applyCors, getUser } = require('./_helpers');
 const { projectFeedbackSchema } = require('./_schemas/projectFeedback');
+const { buildDesignerFeedbackEmail, sendPortalEmail } = require('./_templates/portalEmail');
 const supabase = require('./lib/supabase');
 
 module.exports = async (req, res) => {
@@ -82,6 +83,43 @@ module.exports = async (req, res) => {
   if (insertErr) {
     console.error('[api/project-feedback]', insertErr.message);
     return res.status(500).json({ error: 'Failed to submit feedback: ' + insertErr.message });
+  }
+
+  // Notify designer by email
+  try {
+    const { data: brief } = await supabase
+      .from('briefs')
+      .select('client_name, business_name, designer_id')
+      .eq('id', body.brief_id)
+      .single();
+
+    if (brief) {
+      const { data: designer } = await supabase
+        .from('designers')
+        .select('studio_name, accent_color, designer_email')
+        .eq('id', brief.designer_id)
+        .single();
+
+      if (designer?.designer_email) {
+        const appUrl = process.env.APP_BASE_URL || `https://${process.env.VERCEL_URL || 'localhost:5173'}`;
+        const dashboardUrl = `${appUrl}/login?redirect=${encodeURIComponent('/dashboard?brief=' + body.brief_id)}`;
+        const html = buildDesignerFeedbackEmail({
+          studioName: designer.studio_name || 'Your Studio',
+          accent: designer.accent_color || '#6366f1',
+          clientName: brief.client_name || 'A client',
+          businessName: brief.business_name || '',
+          comment: body.comment,
+          dashboardUrl,
+        });
+        await sendPortalEmail({
+          to: designer.designer_email,
+          subject: `New Feedback — ${brief.client_name || brief.business_name || 'Client'}`,
+          html,
+        });
+      }
+    }
+  } catch (emailErr) {
+    console.error('[api/project-feedback] email failed:', emailErr.message);
   }
 
   return res.status(200).json({ success: true, feedback });

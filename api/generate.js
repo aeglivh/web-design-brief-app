@@ -124,7 +124,7 @@ module.exports = async (req, res) => {
                 briefUrl,
               });
               await resend.emails.send({
-                from:    process.env.EMAIL_FROM || 'briefs@webdesignbrief.studio',
+                from:    process.env.EMAIL_FROM || 'debrieft <noreply@mail.debrieft.app>',
                 to:      designer.designer_email,
                 subject: `New brief — ${data.businessName || data.contactName}`,
                 html,

@@ -2,6 +2,7 @@
 
 const { applyCors } = require('./_helpers');
 const { z } = require('zod');
+const { buildDesignerContractSignedEmail, sendPortalEmail } = require('./_templates/portalEmail');
 const supabase = require('./lib/supabase');
 
 const signSchema = z.object({
@@ -24,7 +25,7 @@ module.exports = async (req, res) => {
   // Verify brief exists and contract is visible
   const { data: brief, error: bErr } = await supabase
     .from('briefs')
-    .select('id, signed_at, contract_visible')
+    .select('id, signed_at, contract_visible, client_name, business_name, designer_id')
     .eq('id', body.brief_id)
     .single();
 
@@ -59,6 +60,36 @@ module.exports = async (req, res) => {
     .from('contracts')
     .update({ status: 'signed' })
     .eq('brief_id', body.brief_id);
+
+  // Notify designer by email
+  try {
+    const { data: designer } = await supabase
+      .from('designers')
+      .select('studio_name, accent_color, designer_email')
+      .eq('id', brief.designer_id)
+      .single();
+
+    console.log("[api/portal-sign] designer email:", designer?.designer_email || "NO EMAIL");
+    if (designer?.designer_email) {
+      const appUrl = process.env.APP_BASE_URL || `https://${process.env.VERCEL_URL || 'localhost:5173'}`;
+      const dashboardUrl = `${appUrl}/login?redirect=${encodeURIComponent('/dashboard?brief=' + body.brief_id)}`;
+      const html = buildDesignerContractSignedEmail({
+        studioName: designer.studio_name || 'Your Studio',
+        accent: designer.accent_color || '#6366f1',
+        clientName: body.signed_name,
+        businessName: brief.business_name || '',
+        signedAt: new Date().toISOString(),
+        dashboardUrl,
+      });
+      await sendPortalEmail({
+        to: designer.designer_email,
+        subject: `Contract Signed — ${body.signed_name}`,
+        html,
+      });
+    }
+  } catch (emailErr) {
+    console.error('[api/portal-sign] email failed:', emailErr.message);
+  }
 
   return res.status(200).json({ success: true });
 };

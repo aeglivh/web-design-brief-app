@@ -7,6 +7,8 @@ interface ContractResult {
   contract_data: ContractData;
   status: string;
   created_at: string;
+  designer_signed_name?: string | null;
+  designer_signed_at?: string | null;
 }
 
 export function useContractGeneration() {
@@ -83,5 +85,27 @@ export function useContractGeneration() {
     }
   }, []);
 
-  return { generate, generating, load, loading, save, saving, error, contract, setContract };
+  /** Designer signs the contract */
+  const sign = useCallback(async (contractId: string, signedName: string) => {
+    setSaving(true);
+    try {
+      const res = await authFetch(`${API_BASE}/api/contract-sign`, {
+        method: "POST",
+        body: JSON.stringify({ contractId, signed_name: signedName }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Sign failed" }));
+        throw new Error(err.error || "Failed to sign contract");
+      }
+      const data = await res.json();
+      setContract(data.contract);
+      return true;
+    } catch {
+      return false;
+    } finally {
+      setSaving(false);
+    }
+  }, []);
+
+  return { generate, generating, load, loading, save, saving, sign, error, contract, setContract };
 }

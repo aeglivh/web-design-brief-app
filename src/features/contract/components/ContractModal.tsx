@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { Modal } from "@/components/ui";
 import { ContractDocument } from "./ContractDocument";
+import { buildContractHtml, downloadPdf } from "@/lib/downloadPdf";
 import type { ContractData } from "@/lib/types";
 
 const FONT_SIZES = [12, 13, 14, 15, 16] as const;
@@ -14,7 +15,10 @@ interface ContractModalProps {
   currency: string;
   accent: string;
   onSave: (contractId: string, data: ContractData) => Promise<boolean>;
+  onSign: (contractId: string, signedName: string) => Promise<boolean>;
   saving: boolean;
+  designerSignedName?: string | null;
+  designerSignedAt?: string | null;
   onClose: () => void;
 }
 
@@ -27,13 +31,19 @@ export function ContractModal({
   currency,
   accent,
   onSave,
+  onSign,
   saving,
+  designerSignedName,
+  designerSignedAt,
   onClose,
 }: ContractModalProps) {
   const [data, setData] = useState<ContractData>(initialData);
   const [dirty, setDirty] = useState(false);
   const [fontSize, setFontSize] = useState<number>(14);
   const dataRef = useRef(data);
+  const [signName, setSignName] = useState(studioName || "");
+  const [signed, setSigned] = useState(!!designerSignedName);
+  const [signing, setSigning] = useState(false);
 
   const handleChange = useCallback((updated: ContractData) => {
     setData(updated);
@@ -101,10 +111,24 @@ export function ContractModal({
           </div>
           <div className="w-px h-4 bg-th-border mx-0.5" />
           <button
-            onClick={() => window.print()}
+            onClick={async () => {
+              const html = buildContractHtml({
+                studioName,
+                clientName,
+                businessName,
+                currency,
+                accent,
+                data: dataRef.current as unknown as Record<string, unknown>,
+                designerSignature: {
+                  name: designerSignedName || (signed ? signName : null),
+                  date: designerSignedAt || (signed ? new Date().toISOString() : null),
+                },
+              });
+              await downloadPdf(html, `Contract — ${businessName || clientName}.pdf`);
+            }}
             className="h-8 px-3 rounded-lg text-[11px] font-medium text-th-muted hover:text-th-secondary hover:bg-th-surface-hover transition-all cursor-pointer"
           >
-            Print / PDF
+            Download Contract
           </button>
           <div className="w-px h-4 bg-th-border mx-0.5" />
           <button
@@ -150,7 +174,107 @@ export function ContractModal({
             currency={currency}
             accent={accent}
             fontSize={fontSize}
+            designerSignature={{
+              name: designerSignedName || (signed ? signName : null),
+              date: designerSignedAt || (signed ? new Date().toISOString() : null),
+            }}
           />
+
+          {/* Designer Signature Section */}
+          <div
+            className="no-print"
+            style={{
+              marginTop: 40,
+              padding: 24,
+              borderRadius: 16,
+              border: signed
+                ? "1px solid rgba(34,197,94,0.3)"
+                : `1px solid ${accent}33`,
+              backgroundColor: signed
+                ? "rgba(34,197,94,0.06)"
+                : `${accent}08`,
+            }}
+          >
+            {signed ? (
+              <>
+                <div className="flex items-center" style={{ gap: 8 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: "#22c55e" }}>
+                    You signed this contract
+                  </span>
+                </div>
+                <p style={{ fontSize: 12, color: "#666", marginTop: 6 }}>
+                  Signed by {designerSignedName || signName} on{" "}
+                  {designerSignedAt
+                    ? new Date(designerSignedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+                    : new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                </p>
+                <p style={{ fontSize: 11, color: "#999", marginTop: 4 }}>
+                  You can now share this contract with your client via the Portal tab.
+                </p>
+              </>
+            ) : (
+              <>
+                <p style={{ fontSize: 13, fontWeight: 600, color: "#333", marginBottom: 4 }}>
+                  Sign this contract
+                </p>
+                <p style={{ fontSize: 12, color: "#666", marginBottom: 12 }}>
+                  Your signature will appear on the contract before it's sent to the client for counter-signing.
+                </p>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <input
+                    type="text"
+                    value={signName}
+                    onChange={(e) => setSignName(e.target.value)}
+                    placeholder="Your full name or studio name"
+                    style={{
+                      flex: 1,
+                      padding: "10px 14px",
+                      borderRadius: 12,
+                      border: "1px solid #e0e0e0",
+                      fontSize: 13,
+                      color: "#333",
+                      outline: "none",
+                    }}
+                  />
+                  <button
+                    type="button"
+                    disabled={!signName.trim() || signing || saving}
+                    onClick={async () => {
+                      setSigning(true);
+                      // Save any pending edits first
+                      if (dirty) await onSave(contractId, dataRef.current);
+                      const ok = await onSign(contractId, signName.trim());
+                      if (ok) {
+                        setSigned(true);
+                        setDirty(false);
+                      }
+                      setSigning(false);
+                    }}
+                    style={{
+                      padding: "10px 20px",
+                      borderRadius: 12,
+                      border: "none",
+                      backgroundColor: accent,
+                      color: "#fff",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: signName.trim() ? "pointer" : "not-allowed",
+                      opacity: !signName.trim() || signing ? 0.5 : 1,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {signing ? "Signing..." : "Sign Contract"}
+                  </button>
+                </div>
+                <p style={{ fontSize: 10, color: "#999", marginTop: 8 }}>
+                  By signing, you confirm this contract is ready to be shared with your client.
+                </p>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </Modal>

@@ -2,6 +2,7 @@
 
 const { applyCors, getUser } = require('./_helpers');
 const { projectUpdateSchema } = require('./_schemas/projectUpdate');
+const { buildClientUpdateEmail, sendPortalEmail } = require('./_templates/portalEmail');
 const supabase = require('./lib/supabase');
 
 module.exports = async (req, res) => {
@@ -47,10 +48,10 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Invalid request data', details: err.errors });
   }
 
-  // Verify the brief belongs to this designer
+  // Verify the brief belongs to this designer (fetch client info for email)
   const { data: brief } = await supabase
     .from('briefs')
-    .select('id')
+    .select('id, client_email, client_name, business_name, designer_id')
     .eq('id', body.brief_id)
     .eq('designer_id', user.id)
     .single();
@@ -83,6 +84,39 @@ module.exports = async (req, res) => {
       .from('briefs')
       .update({ portal_status: 'complete' })
       .eq('id', body.brief_id);
+  }
+
+  // Notify client by email
+  if (brief.client_email) {
+    try {
+      const { data: designer } = await supabase
+        .from('designers')
+        .select('studio_name, accent_color, slug, designer_email')
+        .eq('id', brief.designer_id)
+        .single();
+
+      if (designer) {
+        const appUrl = process.env.APP_BASE_URL || `https://${process.env.VERCEL_URL || 'localhost:5173'}`;
+        const portalUrl = `${appUrl}/studio/${designer.slug}/${brief.id}`;
+        const html = buildClientUpdateEmail({
+          studioName: designer.studio_name || 'Your Designer',
+          accent: designer.accent_color || '#6366f1',
+          clientName: brief.client_name || 'there',
+          statusLabel: body.status_label,
+          note: body.note || '',
+          portalUrl,
+        });
+        await sendPortalEmail({
+          to: brief.client_email,
+          subject: `Project Update — ${designer.studio_name || 'Your Designer'}`,
+          html,
+          fromName: designer.studio_name,
+          replyTo: designer.designer_email,
+        });
+      }
+    } catch (emailErr) {
+      console.error('[api/project-updates] email failed:', emailErr.message);
+    }
   }
 
   return res.status(200).json({ success: true, update });

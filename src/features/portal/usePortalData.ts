@@ -26,6 +26,8 @@ export interface PortalContract {
   contract_data: Record<string, unknown>;
   status: string;
   created_at: string;
+  designer_signed_name?: string | null;
+  designer_signed_at?: string | null;
 }
 
 export interface PortalBrief {
@@ -78,15 +80,15 @@ export interface PortalPausedData {
   designer_logo: string;
 }
 
-export function usePortalData(slug: string | undefined) {
+export function usePortalData(slug: string | undefined, briefId: string | undefined) {
   const [data, setData] = useState<PortalData | null>(null);
   const [pausedData, setPausedData] = useState<PortalPausedData | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    if (!slug) return;
-    fetch(`${API_BASE}/api/portal?slug=${slug}`, { cache: "no-store" })
+    if (!slug || !briefId) return;
+    fetch(`${API_BASE}/api/portal?slug=${slug}&briefId=${briefId}`, { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : Promise.reject(r)))
       .then((json) => {
         if (json.paused) {
@@ -100,7 +102,7 @@ export function usePortalData(slug: string | undefined) {
         setNotFound(true);
         setLoading(false);
       });
-  }, [slug]);
+  }, [slug, briefId]);
 
   return { data, pausedData, loading, notFound };
 }

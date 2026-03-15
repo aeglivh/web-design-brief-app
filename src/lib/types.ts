@@ -87,6 +87,8 @@ export interface Brief {
   deposit_url?: string;
   deposit_paid?: boolean;
   project_phases?: { phase: string; weeks: string; deliverable: string }[];
+  signed_at?: string | null;
+  signed_name?: string | null;
 }
 
 export interface BriefTags {
