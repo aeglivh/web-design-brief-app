@@ -100,18 +100,6 @@ export function ContractModal({
             </button>
           </div>
           <div className="w-px h-4 bg-th-border mx-0.5" />
-          <a
-            href="https://www.docuseal.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="h-8 px-3 rounded-lg text-[11px] font-medium text-th-muted hover:text-th-secondary hover:bg-th-surface-hover transition-all cursor-pointer inline-flex items-center gap-1.5"
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-            </svg>
-            Sign with DocuSeal
-          </a>
-          <div className="w-px h-4 bg-th-border mx-0.5" />
           <button
             onClick={() => window.print()}
             className="h-8 px-3 rounded-lg text-[11px] font-medium text-th-muted hover:text-th-secondary hover:bg-th-surface-hover transition-all cursor-pointer"
@@ -128,6 +116,20 @@ export function ContractModal({
             </svg>
           </button>
         </div>
+      </div>
+
+      {/* AI disclaimer */}
+      <div
+        className="no-print"
+        style={{
+          padding: "8px 20px",
+          backgroundColor: "rgba(251,191,36,0.08)",
+          borderBottom: "1px solid rgba(251,191,36,0.15)",
+        }}
+      >
+        <p style={{ margin: 0, fontSize: 11, lineHeight: 1.5, color: "#92400e" }}>
+          This contract was AI-generated as a starting point. Review and edit it to comply with your local laws before sharing with your client. debrieft assumes no legal liability.
+        </p>
       </div>
 
       {/* Document */}

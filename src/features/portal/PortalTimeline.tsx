@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { API_BASE } from "@/lib/api";
 import type { PortalUpdate } from "./usePortalData";
 
 function statusPillStyle(label: string): { bg: string; color: string } {
@@ -14,6 +16,7 @@ function statusPillStyle(label: string): { bg: string; color: string } {
 interface PortalTimelineProps {
   updates: PortalUpdate[];
   feedbackUpdateIds: string[];
+  briefId: string;
   accent: string;
 }
 
@@ -25,7 +28,101 @@ function formatDate(iso: string): string {
   });
 }
 
-export function PortalTimeline({ updates, feedbackUpdateIds, accent }: PortalTimelineProps) {
+function FeedbackForm({
+  briefId,
+  updateId,
+  accent,
+  onSubmitted,
+}: {
+  briefId: string;
+  updateId: string;
+  accent: string;
+  onSubmitted: () => void;
+}) {
+  const [comment, setComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async () => {
+    if (!comment.trim()) return;
+    setSubmitting(true);
+    setError("");
+    try {
+      const res = await fetch(`${API_BASE}/api/project-feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brief_id: briefId,
+          update_id: updateId,
+          comment: comment.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        onSubmitted();
+      } else {
+        setError(data.error || "Failed to submit feedback");
+      }
+    } catch {
+      setError("Network error");
+    }
+    setSubmitting(false);
+  };
+
+  return (
+    <div
+      className="rounded-xl"
+      style={{
+        marginTop: 12,
+        padding: 16,
+        border: "1px solid var(--th-border-light)",
+        backgroundColor: "var(--th-surface-hover)",
+      }}
+    >
+      <p className="text-[12px] font-medium" style={{ color: "var(--th-text-secondary)", marginBottom: 10 }}>
+        Share your thoughts on this update
+      </p>
+
+      <textarea
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        placeholder="Write your feedback..."
+        rows={3}
+        className="w-full rounded-lg border text-[13px] outline-none resize-y"
+        style={{
+          padding: "8px 12px",
+          borderColor: "var(--th-border)",
+          backgroundColor: "var(--th-input-bg)",
+          color: "var(--th-text)",
+          marginBottom: 10,
+        }}
+      />
+
+      {error && (
+        <p className="text-[11px]" style={{ color: "#ef4444", marginBottom: 8 }}>{error}</p>
+      )}
+
+      <button
+        type="button"
+        onClick={handleSubmit}
+        disabled={!comment.trim() || submitting}
+        className="rounded-full text-[12px] font-medium cursor-pointer transition-all border hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+        style={{
+          padding: "7px 20px",
+          backgroundColor: accent + "22",
+          borderColor: accent + "44",
+          color: "var(--th-text)",
+        }}
+      >
+        {submitting ? "Sending..." : "Send feedback"}
+      </button>
+    </div>
+  );
+}
+
+export function PortalTimeline({ updates, feedbackUpdateIds, briefId, accent }: PortalTimelineProps) {
+  const [submittedIds, setSubmittedIds] = useState<string[]>([]);
+
   if (updates.length === 0) {
     return (
       <p className="text-[13px]" style={{ color: "var(--th-text-muted)" }}>
@@ -50,7 +147,7 @@ export function PortalTimeline({ updates, feedbackUpdateIds, accent }: PortalTim
 
       <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         {updates.map((update) => {
-          const hasFeedback = feedbackUpdateIds.includes(update.id);
+          const hasFeedback = feedbackUpdateIds.includes(update.id) || submittedIds.includes(update.id);
           const needsFeedback = update.feedback_requested && !hasFeedback;
 
           return (
@@ -100,6 +197,22 @@ export function PortalTimeline({ updates, feedbackUpdateIds, accent }: PortalTim
                       }}
                     >
                       Feedback needed
+                    </span>
+                  )}
+
+                  {/* Feedback submitted badge */}
+                  {hasFeedback && update.feedback_requested && (
+                    <span
+                      className="text-[11px] font-medium"
+                      style={{
+                        display: "inline-block",
+                        padding: "2px 8px",
+                        borderRadius: 10,
+                        backgroundColor: "rgba(34,197,94,0.15)",
+                        color: "#4ade80",
+                      }}
+                    >
+                      Feedback sent
                     </span>
                   )}
 
@@ -157,7 +270,15 @@ export function PortalTimeline({ updates, feedbackUpdateIds, accent }: PortalTim
                   </a>
                 )}
 
-                {/* Feedback form placeholder — built in Task 6 */}
+                {/* Feedback form */}
+                {needsFeedback && (
+                  <FeedbackForm
+                    briefId={briefId}
+                    updateId={update.id}
+                    accent={accent}
+                    onSubmitted={() => setSubmittedIds((prev) => [...prev, update.id])}
+                  />
+                )}
               </div>
             </div>
           );

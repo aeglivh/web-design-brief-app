@@ -23,6 +23,8 @@ const routes = {
   '/api/contract': './api/contract.js',
   '/api/portal': './api/portal.js',
   '/api/project-updates': './api/project-updates.js',
+  '/api/project-feedback': './api/project-feedback.js',
+  '/api/portal-sign': './api/portal-sign.js',
 };
 
 const server = http.createServer(async (req, res) => {

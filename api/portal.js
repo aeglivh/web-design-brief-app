@@ -95,7 +95,7 @@ module.exports = async (req, res) => {
 
   // Load feedback (to know which updates already have responses)
   const { data: feedback } = await supabase
-    .from('project_feedback')
+    .from('client_feedback')
     .select('id, update_id')
     .eq('brief_id', brief.id);
 

@@ -4,6 +4,7 @@ import { usePortalData } from "./usePortalData";
 import { PortalPaused } from "./PortalPaused";
 import { PortalProgress } from "./PortalProgress";
 import { PortalPhases } from "./PortalPhases";
+import { PortalDocuments } from "./PortalDocuments";
 import { PortalTimeline } from "./PortalTimeline";
 
 export default function PortalPage() {
@@ -156,6 +157,9 @@ export default function PortalPage() {
           />
         )}
 
+        {/* Documents (brief, quote, contract) */}
+        <PortalDocuments brief={brief} contract={data.contract} accent={accent} />
+
         {/* Timeline section */}
         <div
           className="rounded-[16px]"
@@ -178,6 +182,7 @@ export default function PortalPage() {
           <PortalTimeline
             updates={data.updates}
             feedbackUpdateIds={data.feedback_update_ids}
+            briefId={brief.id}
             accent={accent}
           />
         </div>

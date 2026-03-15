@@ -24,6 +24,13 @@ interface ProjectUpdate {
   created_at: string;
 }
 
+interface ProjectFeedback {
+  id: string;
+  update_id: string;
+  comment: string;
+  created_at: string;
+}
+
 interface ProjectUpdatesPanelProps {
   briefId: string;
   accent: string;
@@ -50,6 +57,7 @@ function formatDate(iso: string): string {
 
 export function ProjectUpdatesPanel({ briefId, accent }: ProjectUpdatesPanelProps) {
   const [updates, setUpdates] = useState<ProjectUpdate[]>([]);
+  const [feedback, setFeedback] = useState<ProjectFeedback[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Form state
@@ -67,9 +75,14 @@ export function ProjectUpdatesPanel({ briefId, accent }: ProjectUpdatesPanelProp
 
   const loadUpdates = async () => {
     try {
-      const res = await authFetch(`${API_BASE}/api/project-updates?brief_id=${briefId}`);
-      const data = await res.json();
-      setUpdates(data.updates || []);
+      const [updRes, fbRes] = await Promise.all([
+        authFetch(`${API_BASE}/api/project-updates?brief_id=${briefId}`),
+        authFetch(`${API_BASE}/api/project-feedback?brief_id=${briefId}`),
+      ]);
+      const updData = await updRes.json();
+      const fbData = await fbRes.json();
+      setUpdates(updData.updates || []);
+      setFeedback(fbData.feedback || []);
     } catch {
       // silent
     }
@@ -375,17 +388,31 @@ export function ProjectUpdatesPanel({ briefId, accent }: ProjectUpdatesPanelProp
                     {u.status_label}
                   </span>
                   {u.feedback_requested && (
-                    <span
-                      className="text-[10px] font-medium"
-                      style={{
-                        padding: "2px 8px",
-                        borderRadius: 10,
-                        backgroundColor: "rgba(245,158,11,0.15)",
-                        color: "#fbbf24",
-                      }}
-                    >
-                      Feedback requested
-                    </span>
+                    feedback.some((f) => f.update_id === u.id) ? (
+                      <span
+                        className="text-[10px] font-medium"
+                        style={{
+                          padding: "2px 8px",
+                          borderRadius: 10,
+                          backgroundColor: "rgba(34,197,94,0.15)",
+                          color: "#4ade80",
+                        }}
+                      >
+                        Feedback received
+                      </span>
+                    ) : (
+                      <span
+                        className="text-[10px] font-medium"
+                        style={{
+                          padding: "2px 8px",
+                          borderRadius: 10,
+                          backgroundColor: "rgba(245,158,11,0.15)",
+                          color: "#fbbf24",
+                        }}
+                      >
+                        Awaiting feedback
+                      </span>
+                    )
                   )}
                   <span className="text-[11px] font-mono" style={{ color: "var(--th-text-muted)" }}>
                     {formatDate(u.created_at)}
@@ -420,6 +447,34 @@ export function ProjectUpdatesPanel({ briefId, accent }: ProjectUpdatesPanelProp
                     {u.link_label || "View link"}
                   </a>
                 )}
+                {/* Client feedback */}
+                {(() => {
+                  const fb = feedback.find((f) => f.update_id === u.id);
+                  if (!fb) return null;
+                  return (
+                    <div
+                      className="rounded-lg"
+                      style={{
+                        marginTop: 8,
+                        padding: "8px 12px",
+                        border: "1px solid var(--th-border-light)",
+                        backgroundColor: "var(--th-surface-hover)",
+                      }}
+                    >
+                      <div className="flex items-center" style={{ gap: 6, marginBottom: 4 }}>
+                        <span className="text-[11px] font-medium" style={{ color: "var(--th-text-secondary)" }}>
+                          Client feedback
+                        </span>
+                        <span className="text-[10px] font-mono" style={{ color: "var(--th-text-muted)" }}>
+                          {formatDate(fb.created_at)}
+                        </span>
+                      </div>
+                      <p className="text-[12px] leading-relaxed" style={{ color: "var(--th-text-secondary)" }}>
+                        {fb.comment}
+                      </p>
+                    </div>
+                  );
+                })()}
               </div>
             ))}
           </div>
